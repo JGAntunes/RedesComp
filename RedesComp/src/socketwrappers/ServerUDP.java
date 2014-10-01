@@ -6,7 +6,7 @@ import java.net.*;
  * @author Joao Antunes
  *
  */
-public class ServerUDP implements Runnable{
+public class ServerUDP{
 		
 	private DatagramSocket _socket;
 	private byte[] _inputBuffer;
@@ -25,6 +25,7 @@ public class ServerUDP implements Runnable{
 	}
 
 	public void setSocket(DatagramSocket socket) {
+		_socket.close();
 		_socket = socket;
 	}
 
@@ -32,8 +33,14 @@ public class ServerUDP implements Runnable{
 		return _port;
 	}
 
-	public void setPort(int port) {
+	public void setPort(int port) throws IOException {
 		_port = port;
+		reconnect();
+	}
+	
+	public void reconnect() throws IOException{
+		_socket.close();
+		_socket.bind(new InetSocketAddress(InetAddress.getLocalHost(), _port));
 	}
 
 	public MessageUDP receiveMessage() throws IOException{
@@ -47,10 +54,5 @@ public class ServerUDP implements Runnable{
 		_outputBuffer = message.getMessage().getBytes();
 		DatagramPacket sendPacket = new DatagramPacket(_outputBuffer, _outputBuffer.length, message.getIPAddress(), message.getPort());
 		_socket.send(sendPacket);
-	}
-
-	@Override
-	public void run() {
-		
 	}
 }

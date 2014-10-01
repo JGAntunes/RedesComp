@@ -31,15 +31,17 @@ public class ServerTCP{
 		return _port;
 	}
 
-	public void setPort(int port) {
+	public void setPort(int port) throws IOException {
 		_port = port;
+		reconnect();
 	}
 
 	public ServerSocket getServerSocket() {
 		return _serverSocket;
 	}
 
-	public void setServerSocket(ServerSocket serverSocket) {
+	public void setServerSocket(ServerSocket serverSocket) throws IOException {
+		_serverSocket.close();
 		_serverSocket = serverSocket;
 	}
 
@@ -51,6 +53,10 @@ public class ServerTCP{
 		_clientSocket = clientSocket;
 	}
 	
+	public void reconnect() throws IOException{
+		_serverSocket.close();
+		_serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), _port));
+	}
 	
 	public void waitConnection() throws IOException{
 		_clientSocket = _serverSocket.accept();

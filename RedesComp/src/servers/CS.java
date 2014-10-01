@@ -23,7 +23,7 @@ public class CS {
 	private static String _name;
 	private static String _ip;
 	private static int _port;
-	private static final int DEFAULT_PORT = 58003;
+	public static final int DEFAULT_PORT = 58003;
 	private static final String RESOURCES_PATH = "./resources/FILES_LIST";
 	private static final String SERVERS_PATH = "./resources/SERVERS_LIST";
 	
