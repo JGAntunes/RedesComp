@@ -11,6 +11,8 @@ import java.net.UnknownHostException;
 import servers.CS;
 import socketwrappers.ClientTCP;
 import socketwrappers.ClientUDP;
+import socketwrappers.MessageUDP;
+import utils.*;
 
 /**
  * @author Joao Antunes
@@ -21,14 +23,18 @@ public class User {
 	private static ClientUDP _clientUDP;
 	private static String _CSName;
 	private static int _CSPort;
+	private static String _SSName;
+	private static int _SSPort;
 	private static BufferedReader _input;
 	
 
 	public static void main(String[] args){
 		initParser(args);
+		System.out.println(_CSName);
+		System.out.println(_CSPort);
 		try {
 			_clientTCP = new ClientTCP(_CSName, _CSPort);
-			_clientUDP = new ClientUDP(_CSName, _CSPort);
+			_clientUDP = new ClientUDP();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -78,8 +84,22 @@ public class User {
 		}
 	}
 	
-	public static boolean commandParser(String input) throws IllegalArgumentException{
+	public static boolean commandParser(String input){
 		if(input.equals("list")){
+			System.out.println("- Sent list");
+			try {
+				_clientUDP.sendToServer(new MessageUDP(_CSName, _CSPort, Protocol.LIST + "\n"));
+				MessageUDP msg = _clientUDP.receiveFromServer();
+				System.out.println(msg.getMessage());
+				showOutput(msg.getMessage().split(" "));
+				
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 		else if(input.startsWith("retrieve")){
@@ -89,9 +109,42 @@ public class User {
 			
 		}
 		else if(input.equals("exit")){
-			
+			return false;
 		}
 		else{
+			System.out.println("Invalid command");
+		}
+		return true;
+	}
+	
+	public static void showOutput(String[] data){
+		if(data.length == 0){
+			System.out.println("No message received from the server");
+		}
+		else if(data[0].equals(Protocol.LIST_RESPONSE)){
+			if(data.length > 4){
+				_SSName = data[1];
+				_SSPort = Integer.parseInt(data[2]);
+				int numFiles = Integer.parseInt(data[3]);
+				System.out.println("Available files for download:");
+				for(int i = 1; i <= numFiles; i++){
+					System.out.println(i + " " + data[3+i]);
+				}
+			}
+		}
+		else if(data[0].equals(Protocol.CHECK_FILE_RESPONSE)){
+			
+		}
+		else if(data[0].equals(Protocol.UP_USER_RESPONSE)){
+			
+		}
+		else if(data[0].equals(Protocol.DOWN_RESPONSE)){
+			
+		}
+		else if(data[0].equals(Protocol.ERROR)){
+			
+		}
+		else if(data[0].equals(Protocol.EOF)){
 			
 		}
 	}

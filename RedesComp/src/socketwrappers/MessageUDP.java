@@ -1,5 +1,6 @@
 package socketwrappers;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * 
@@ -14,10 +15,16 @@ public class MessageUDP {
 	private String _message;
 	private InetAddress _IPAddress;
 	
-	public MessageUDP(int port, String message, InetAddress IPAddress){
+	public MessageUDP(String IPAddress, int port, String message) throws UnknownHostException{
 		_port = port;
 		_message = message;
-		_IPAddress = IPAddress;
+		_IPAddress = InetAddress.getByName(IPAddress);
+	}
+	
+	public MessageUDP(InetAddress IPAddress, int port, String message){
+		_port = port;
+		_message = message;
+		_IPAddress =IPAddress;
 	}
 	
 	public String getMessage(){

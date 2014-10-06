@@ -46,7 +46,7 @@ public class ServerUDP{
 	public MessageUDP receiveMessage() throws IOException{
 		DatagramPacket receivePacket = new DatagramPacket(_inputBuffer, _inputBuffer.length);
 		_socket.receive(receivePacket);
-		MessageUDP message = new MessageUDP(receivePacket.getPort(), new String( receivePacket.getData()), _socket.getInetAddress());
+		MessageUDP message = new MessageUDP(_socket.getInetAddress(), receivePacket.getPort(), new String( receivePacket.getData()));
 		return message;
 	}
 	

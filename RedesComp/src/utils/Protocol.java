@@ -31,6 +31,8 @@ public class Protocol {
 	
 	public final static String ERROR = new String("ERR");
 	
+	public final static String EOF = new String("\u001a");
+	
 	private Protocol(){}
 	
 }

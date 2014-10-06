@@ -27,7 +27,15 @@ public class ClientUDP {
 		_port = port;
 		_inputBuffer = new byte[5120];
 		_outputBuffer = new byte[5120];
-		_socket = new DatagramSocket(port, InetAddress.getByName(_host));
+		_socket = new DatagramSocket(port, InetAddress.getByName(host));
+	}
+	
+	public ClientUDP() throws UnknownHostException, IOException{
+		_socket = new DatagramSocket();
+		_host = "localhost";
+		_port = _socket.getPort();
+		_inputBuffer = new byte[5120];
+		_outputBuffer = new byte[5120];
 	}
 	
 	public int getPort() {
@@ -63,7 +71,7 @@ public class ClientUDP {
 	public MessageUDP receiveFromServer() throws IOException{
 		DatagramPacket receivePacket = new DatagramPacket(_inputBuffer, _inputBuffer.length);
 		_socket.receive(receivePacket);
-		MessageUDP message = new MessageUDP(receivePacket.getPort(), new String( receivePacket.getData()), _socket.getInetAddress());
+		MessageUDP message = new MessageUDP(_socket.getInetAddress(), receivePacket.getPort(), new String( receivePacket.getData()));
 		return message;
 	}
 	
