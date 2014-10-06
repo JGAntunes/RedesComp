@@ -22,7 +22,7 @@ public class ClientUDP {
 	private String _host;
 	private int _port;
 	
-	ClientUDP(String host, int port) throws UnknownHostException, IOException{
+	public ClientUDP(String host, int port) throws UnknownHostException, IOException{
 		_host = host;
 		_port = port;
 		_inputBuffer = new byte[5120];

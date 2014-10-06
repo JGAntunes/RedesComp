@@ -22,7 +22,7 @@ public class ClientTCP {
 	private String _host;
 	private int _port;
 	
-	ClientTCP(String host, int port) throws UnknownHostException, IOException{
+	public ClientTCP(String host, int port) throws UnknownHostException, IOException{
 		_host = host;
 		_port = port;
 		_socket = new Socket(host, port);
