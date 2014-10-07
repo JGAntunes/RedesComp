@@ -6,6 +6,7 @@ package user;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import servers.CS;
@@ -26,6 +27,7 @@ public class User {
 	private static String _SSName;
 	private static int _SSPort;
 	private static BufferedReader _input;
+	private static String _fileName;
 	
 
 	public static void main(String[] args){
@@ -35,23 +37,29 @@ public class User {
 		try {
 			_clientTCP = new ClientTCP(_CSName, _CSPort);
 			_clientUDP = new ClientUDP();
+		} catch (SocketException e) {
+			System.err.println(Errors.SOCKET_PROBLEM);
+			System.exit(-1);
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(Errors.UNKNOWN_HOST);
+			System.exit(-1);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(Errors.IO_SOCKET_PROBLEM);
+			System.exit(-1);
 		}
 		_input = new BufferedReader(new InputStreamReader(System.in));
 		try {
-			while(commandParser(_input.readLine())){}
+			while(emitter(_input.readLine())){}
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(Errors.INVALID_COMMAND);
+			System.exit(-1);
+		} catch (UnknownHostException e) {
+			System.err.println(Errors.UNKNOWN_HOST);
+			System.exit(-1);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		};
+			System.err.println(Errors.IO_INPUT);
+			System.exit(-1);
+		}
 	}
 	
 	public static void initParser(String[] args) throws IllegalArgumentException{
@@ -84,31 +92,38 @@ public class User {
 		}
 	}
 	
-	public static boolean commandParser(String input){
-		if(input.equals("list")){
-			System.out.println("- Sent list");
-			try {
-				_clientUDP.sendToServer(new MessageUDP(_CSName, _CSPort, Protocol.LIST + "\n"));
-				MessageUDP msg = _clientUDP.receiveFromServer();
-				System.out.println(msg.getMessage());
-				showOutput(msg.getMessage().split(" "));
-				
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	public static boolean emitter(String input) throws UnknownHostException, IOException{
+		String bufferTCP;
+		MessageUDP bufferUDP;
+		if(input.equals(Protocol.LIST_COMMAND)){
+			_clientUDP.sendToServer(new MessageUDP(_CSName, _CSPort, Protocol.LIST + "\n"));
+			System.out.println(">> Sent list");
+			bufferUDP = _clientUDP.receiveFromServer();
+			processOutput(bufferUDP.getMessage().split(" "));
+			
+		}
+		else if(input.startsWith(Protocol.RETRIEVE_COMMAND + " ")){
+			_fileName = input.split("retrieve ")[1];
+			_clientTCP.sendToServer(Protocol.DOWN_FILE + " " + _fileName + "\n");
+			System.out.println(">> Sent retrieve");
+			bufferTCP = _clientTCP.receiveFromServer();
+			System.out.println(bufferTCP);
+			if(processOutput(bufferTCP.split(" "))){
 			}
-			
 		}
-		else if(input.startsWith("retrieve")){
-			
+		else if(input.startsWith(Protocol.UPLOAD_COMMAND + " ")){
+			_fileName = input.split("upload ")[1];
+			_clientTCP.sendToServer(Protocol.CHECK_FILE + " " + _fileName + "\n");
+			System.out.println(">> Sent upload");
+			bufferTCP = _clientTCP.receiveFromServer();
+			if(processOutput(bufferTCP.split(" "))){
+				System.out.println(">> Uploading");
+				_clientTCP.sendToServer(Protocol.UP_USER_FILE + "...");
+				System.out.println(">> Upload finished");
+				bufferTCP = _clientTCP.receiveFromServer();
+			}
 		}
-		else if(input.startsWith("upload")){
-			
-		}
-		else if(input.equals("exit")){
+		else if(input.equals(Protocol.EXIT_COMMAND)){
 			return false;
 		}
 		else{
@@ -117,7 +132,7 @@ public class User {
 		return true;
 	}
 	
-	public static void showOutput(String[] data){
+	public static boolean processOutput(String[] data){
 		if(data.length == 0){
 			System.out.println("No message received from the server");
 		}
@@ -130,16 +145,38 @@ public class User {
 				for(int i = 1; i <= numFiles; i++){
 					System.out.println(i + " " + data[3+i]);
 				}
+				return true;
 			}
+			return false;
 		}
 		else if(data[0].equals(Protocol.CHECK_FILE_RESPONSE)){
-			
+			if(data[1].equals(Protocol.IN_USE)){
+				System.out.println("File name already in use, please try another one.");
+				return false;
+			}
+			else if(data[1].equals(Protocol.AVAILABLE)){
+				System.out.println("File available");
+				return true;
+			}
 		}
 		else if(data[0].equals(Protocol.UP_USER_RESPONSE)){
-			
+			if(data[1].equals(Protocol.NOT_OK)){
+				System.out.println("Problems uploading file. Please try again.");
+				return false;
+			}
+			else if(data[1].equals(Protocol.OK)){
+				System.out.println("File uploaded successfully.");
+				return true;
+			}
 		}
 		else if(data[0].equals(Protocol.DOWN_RESPONSE)){
-			
+			if(data[1].equals(Protocol.NOT_OK)){
+				System.out.println("Requested file isn't available. Please try again.");
+				return false;
+			}
+			else if(data[1].equals(Protocol.OK)){
+				return true;
+			}
 		}
 		else if(data[0].equals(Protocol.ERROR)){
 			
@@ -147,5 +184,6 @@ public class User {
 		else if(data[0].equals(Protocol.EOF)){
 			
 		}
+		return true;
 	}
 }

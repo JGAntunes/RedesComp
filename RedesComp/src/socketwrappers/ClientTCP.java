@@ -26,6 +26,7 @@ public class ClientTCP {
 		_host = host;
 		_port = port;
 		_socket = new Socket(host, port);
+		System.out.println(_socket.isConnected());
 		_output = new DataOutputStream(_socket.getOutputStream());
 	}
 	

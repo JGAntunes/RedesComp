@@ -9,6 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 /**
@@ -22,7 +23,7 @@ public class ClientUDP {
 	private String _host;
 	private int _port;
 	
-	public ClientUDP(String host, int port) throws UnknownHostException, IOException{
+	public ClientUDP(String host, int port) throws UnknownHostException, SocketException{
 		_host = host;
 		_port = port;
 		_inputBuffer = new byte[5120];
@@ -30,7 +31,7 @@ public class ClientUDP {
 		_socket = new DatagramSocket(port, InetAddress.getByName(host));
 	}
 	
-	public ClientUDP() throws UnknownHostException, IOException{
+	public ClientUDP() throws SocketException{
 		_socket = new DatagramSocket();
 		_host = "localhost";
 		_port = _socket.getPort();
