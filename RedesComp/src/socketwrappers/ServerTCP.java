@@ -1,5 +1,7 @@
 package socketwrappers;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,8 +17,8 @@ import java.net.*;
  */
 public class ServerTCP{
 
-	
-	private BufferedReader _input;
+	private BufferedReader _inputString;
+	private BufferedInputStream _inputByte;
 	private DataOutputStream _output;
 	private Socket _clientSocket;
 	private ServerSocket _serverSocket;
@@ -65,11 +67,30 @@ public class ServerTCP{
 	public void sendMessage(String message) throws IOException{
 		_output = new DataOutputStream(_clientSocket.getOutputStream());
 		_output.writeBytes(message);
+		_output.close();
 	}
 	
-	public String receiveMessage() throws IOException{
-		_input = new BufferedReader(new InputStreamReader(_clientSocket.getInputStream()));
-		return _input.readLine();
+	public String receiveStringMessage() throws IOException{
+		_inputString = new BufferedReader(new InputStreamReader(_clientSocket.getInputStream()));
+		String out = _inputString.readLine();
+		_inputString.close();
+		return out;
+	}
+	
+	public byte[] receiveByteMessage() throws IOException{
+		byte[] resultBuff = new byte[0];
+		byte[] buff = new byte[133169152];
+		int k = -1;
+		_inputByte = new BufferedInputStream(_clientSocket.getInputStream());
+
+		while ((k = _inputByte.read(buff, 0, buff.length)) > -1) {
+			byte[] tempBuff = new byte[resultBuff.length + k];
+			System.arraycopy(resultBuff, 0, tempBuff, 0, resultBuff.length);
+			System.arraycopy(buff, 0, tempBuff, resultBuff.length, k);
+			resultBuff = tempBuff;
+		}
+		_inputByte.close();
+		return resultBuff;
 	}
 
 }

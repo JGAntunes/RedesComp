@@ -9,6 +9,10 @@ import java.io.InputStreamReader;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import commands.Command;
+import commands.List;
+import commands.Retrieve;
+import commands.Upload;
 import servers.CS;
 import socketwrappers.ClientTCP;
 import socketwrappers.ClientUDP;
@@ -20,8 +24,6 @@ import utils.*;
  *
  */
 public class User {
-	private static ClientTCP _clientTCP;
-	private static ClientUDP _clientUDP;
 	private static String _CSName;
 	private static int _CSPort;
 	private static String _SSName;
@@ -35,20 +37,7 @@ public class User {
 		System.out.println(_CSName);
 		System.out.println(_CSPort);
 		try {
-			_clientTCP = new ClientTCP(_CSName, _CSPort);
-			_clientUDP = new ClientUDP();
-		} catch (SocketException e) {
-			System.err.println(Errors.SOCKET_PROBLEM);
-			System.exit(-1);
-		} catch (UnknownHostException e) {
-			System.err.println(Errors.UNKNOWN_HOST);
-			System.exit(-1);
-		} catch (IOException e) {
-			System.err.println(Errors.IO_SOCKET_PROBLEM);
-			System.exit(-1);
-		}
-		_input = new BufferedReader(new InputStreamReader(System.in));
-		try {
+			_input = new BufferedReader(new InputStreamReader(System.in));
 			while(emitter(_input.readLine())){}
 		} catch (IllegalArgumentException e) {
 			System.err.println(Errors.INVALID_COMMAND);
@@ -56,7 +45,10 @@ public class User {
 		} catch (UnknownHostException e) {
 			System.err.println(Errors.UNKNOWN_HOST);
 			System.exit(-1);
-		} catch (IOException e) {
+		} catch (SocketException e) {
+			System.err.println(Errors.SOCKET_PROBLEM);
+			System.exit(-1);
+		}catch (IOException e) {
 			System.err.println(Errors.IO_INPUT);
 			System.exit(-1);
 		}
@@ -93,97 +85,49 @@ public class User {
 	}
 	
 	public static boolean emitter(String input) throws UnknownHostException, IOException{
-		String bufferTCP;
-		MessageUDP bufferUDP;
+		Command com = null;
 		if(input.equals(Protocol.LIST_COMMAND)){
-			_clientUDP.sendToServer(new MessageUDP(_CSName, _CSPort, Protocol.LIST + "\n"));
-			System.out.println(">> Sent list");
-			bufferUDP = _clientUDP.receiveFromServer();
-			processOutput(bufferUDP.getMessage().split(" "));
-			
+			com = new List(new ClientUDP(), _CSName, _CSPort, null);
 		}
 		else if(input.startsWith(Protocol.RETRIEVE_COMMAND + " ")){
-			_fileName = input.split("retrieve ")[1];
-			_clientTCP.sendToServer(Protocol.DOWN_FILE + " " + _fileName + "\n");
-			System.out.println(">> Sent retrieve");
-			bufferTCP = _clientTCP.receiveFromServer();
-			System.out.println(bufferTCP);
-			if(processOutput(bufferTCP.split(" "))){
+			if(_SSName != null){
+				String[] arguments = input.split(Protocol.RETRIEVE_COMMAND + " ");
+				if(arguments.length == 2){
+					com = new Retrieve(new ClientTCP(_SSName, _SSPort), _SSName, _SSPort, arguments[1].split(" "));
+				}
+				else{
+					System.out.println(Errors.INVALID_COMMAND);
+				}
+			}
+			else{
+				System.out.println("Please use the list command first.");
 			}
 		}
 		else if(input.startsWith(Protocol.UPLOAD_COMMAND + " ")){
-			_fileName = input.split("upload ")[1];
-			_clientTCP.sendToServer(Protocol.CHECK_FILE + " " + _fileName + "\n");
-			System.out.println(">> Sent upload");
-			bufferTCP = _clientTCP.receiveFromServer();
-			if(processOutput(bufferTCP.split(" "))){
-				System.out.println(">> Uploading");
-				_clientTCP.sendToServer(Protocol.UP_USER_FILE + "...");
-				System.out.println(">> Upload finished");
-				bufferTCP = _clientTCP.receiveFromServer();
+			String[] arguments = input.split(Protocol.UPLOAD_COMMAND + " ");
+			if(arguments.length == 2){
+				com = new Upload(new ClientTCP(_CSName, _CSPort), _CSName, _CSPort, arguments[1].split(" "));
+			}
+			else{
+				System.out.println(Errors.INVALID_COMMAND);
 			}
 		}
 		else if(input.equals(Protocol.EXIT_COMMAND)){
 			return false;
 		}
 		else{
-			System.out.println("Invalid command");
+			System.out.println(Errors.INVALID_COMMAND);
+			return true;
 		}
+		if(com != null){
+			com.run();
+		}
+		
 		return true;
 	}
 	
-	public static boolean processOutput(String[] data){
-		if(data.length == 0){
-			System.out.println("No message received from the server");
-		}
-		else if(data[0].equals(Protocol.LIST_RESPONSE)){
-			if(data.length > 4){
-				_SSName = data[1];
-				_SSPort = Integer.parseInt(data[2]);
-				int numFiles = Integer.parseInt(data[3]);
-				System.out.println("Available files for download:");
-				for(int i = 1; i <= numFiles; i++){
-					System.out.println(i + " " + data[3+i]);
-				}
-				return true;
-			}
-			return false;
-		}
-		else if(data[0].equals(Protocol.CHECK_FILE_RESPONSE)){
-			if(data[1].equals(Protocol.IN_USE)){
-				System.out.println("File name already in use, please try another one.");
-				return false;
-			}
-			else if(data[1].equals(Protocol.AVAILABLE)){
-				System.out.println("File available");
-				return true;
-			}
-		}
-		else if(data[0].equals(Protocol.UP_USER_RESPONSE)){
-			if(data[1].equals(Protocol.NOT_OK)){
-				System.out.println("Problems uploading file. Please try again.");
-				return false;
-			}
-			else if(data[1].equals(Protocol.OK)){
-				System.out.println("File uploaded successfully.");
-				return true;
-			}
-		}
-		else if(data[0].equals(Protocol.DOWN_RESPONSE)){
-			if(data[1].equals(Protocol.NOT_OK)){
-				System.out.println("Requested file isn't available. Please try again.");
-				return false;
-			}
-			else if(data[1].equals(Protocol.OK)){
-				return true;
-			}
-		}
-		else if(data[0].equals(Protocol.ERROR)){
-			
-		}
-		else if(data[0].equals(Protocol.EOF)){
-			
-		}
-		return true;
+	public static void setSS(String name, int port){
+		_SSName = name;
+		_SSPort = port;
 	}
 }

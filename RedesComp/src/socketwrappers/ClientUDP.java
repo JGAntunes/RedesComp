@@ -69,6 +69,10 @@ public class ClientUDP {
 		_socket.connect(new InetSocketAddress(_host, _port));
 	}
 	
+	public void close() throws IOException{
+		_socket.close();
+	}
+	
 	public MessageUDP receiveFromServer() throws IOException{
 		DatagramPacket receivePacket = new DatagramPacket(_inputBuffer, _inputBuffer.length);
 		_socket.receive(receivePacket);

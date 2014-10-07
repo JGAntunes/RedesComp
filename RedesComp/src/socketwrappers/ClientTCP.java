@@ -26,7 +26,6 @@ public class ClientTCP {
 		_host = host;
 		_port = port;
 		_socket = new Socket(host, port);
-		System.out.println(_socket.isConnected());
 		_output = new DataOutputStream(_socket.getOutputStream());
 	}
 	
@@ -60,9 +59,18 @@ public class ClientTCP {
 		_socket.connect(new InetSocketAddress(_host, _port));
 	}
 	
+	public void close() throws IOException{
+		_socket.close();
+	}
+	
 	public void sendToServer(String message) throws IOException{
 		_output = new DataOutputStream(_socket.getOutputStream());
 		_output.writeBytes(message + '\n');
+	}
+	
+	public void sendToServer(byte[] message, int length) throws IOException{
+		_output = new DataOutputStream(_socket.getOutputStream());
+		_output.write(message, 0, length);
 	}
 	
 	public String receiveFromServer() throws IOException{

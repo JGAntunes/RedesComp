@@ -42,6 +42,10 @@ public class ServerUDP{
 		_socket.close();
 		_socket.bind(new InetSocketAddress(InetAddress.getLocalHost(), _port));
 	}
+	
+	public void close() throws IOException{
+		_socket.close();
+	}
 
 	public MessageUDP receiveMessage() throws IOException{
 		DatagramPacket receivePacket = new DatagramPacket(_inputBuffer, _inputBuffer.length);
