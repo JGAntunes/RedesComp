@@ -3,6 +3,7 @@
  */
 package socketwrappers;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
@@ -14,7 +15,7 @@ public class MessageTCP {
 	private String[] _strParams;
 	private byte[] _data;
 	
-	MessageTCP(byte[] data, int args){
+	MessageTCP(byte[] data, int args) throws UnsupportedEncodingException{
 		int i = 0, offset = 0, total = 0;
 		int argsRead = 0;
 		byte[] argsBuffer = null;
@@ -22,10 +23,10 @@ public class MessageTCP {
 		ArrayList<byte[]> processor = new ArrayList<byte[]>();
 		for(byte b : data){
 			if((char) b == ' ' || (char) b == '\n'){
-				argsBuffer = new byte[i+1];
-				System.arraycopy(data, offset, argsBuffer, 0, i+1);
+				argsBuffer = new byte[i];
+				System.arraycopy(data, offset, argsBuffer, 0, i);
 				processor.add(argsBuffer);
-				offset = i;
+				offset = i + 1;
 				i = 0;
 				argsRead++;
 				if(argsRead == args){
@@ -40,7 +41,7 @@ public class MessageTCP {
 		i = 0;
 		_strParams = new String[processor.size()];
 		for(byte[] bs : processor){
-			_strParams[i] = bs.toString();
+			_strParams[i] = new String(bs, "UTF-8");
 			i++;
 		}
 	}

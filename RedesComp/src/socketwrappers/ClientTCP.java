@@ -28,7 +28,7 @@ public class ClientTCP {
 		_host = host;
 		_port = port;
 		_socket = new Socket(host, port);
-		_socket.setSoTimeout(40000);
+		_socket.setKeepAlive(true);
 		if(_socket.isConnected()){
 			System.out.println("Successfully connected to: " + _host + ": " + _port);
 		}

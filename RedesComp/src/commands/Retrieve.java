@@ -43,17 +43,17 @@ public class Retrieve extends Command{
 				throw new IllegalArgumentException();
 			}
 			_fileName = _arguments[0];
-			_user.sendToServer(Protocol.DOWN_FILE + " " + _fileName + "\n");
+			_user.sendToServer(Protocol.DOWN_FILE + " " + _fileName);
 			System.out.println(">> Sent retrieve");
 			_bufferTCP = _user.receiveFromServer(Protocol.DOWN_RESPONSE_ARGS);
 			_arguments = _bufferTCP.getStrParams();
+			System.out.println(_arguments[0] + "#" + _arguments[1] + "#" + _arguments[2] + "#");
 			if(_arguments[0].equals(Protocol.DOWN_RESPONSE)){
-				System.out.println(_arguments.length);
 				if(_arguments.length == 3){
-					if(_arguments[1].equals(Protocol.NOT_OK)){
+					if(_arguments[1].startsWith(Protocol.NOT_OK)){
 						System.out.println("Requested file isn't available. Please try again.");
 					}
-					else if(_arguments[1].equals(Protocol.OK)){
+					else if(_arguments[1].startsWith(Protocol.OK)){
 						System.out.println("File received!");
 						try{
 							FileHandler.createFile(LocalPaths.DOWNLOADS + _fileName, Integer.parseInt(_arguments[2]), _bufferTCP.getData());
@@ -84,9 +84,11 @@ public class Retrieve extends Command{
 				System.exit(-1);
 			}
 			else{
+				System.out.println(_arguments[0]);
 				System.out.println(Errors.INVALID_COMMAND);
 			}
 		} catch (IllegalArgumentException e){
+			e.printStackTrace();
 			System.err.println(Errors.INVALID_COMMAND);
 			System.exit(-1);
 		} catch (IOException e){
