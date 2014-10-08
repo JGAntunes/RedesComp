@@ -23,6 +23,8 @@ import java.nio.file.Paths;
  */
 
 public class FileHandler {
+
+
 	/**
 	 * Function that creates the file. It receives as arguments the path, the size and the data
 	 * that has to be saved in the file.
@@ -35,12 +37,8 @@ public class FileHandler {
 	 * is written we close the file.
 	 */
 	
-	public static void createFile(String filePath, int size ,String data) throws IOException{
-		byte[] b = data.getBytes(StandardCharsets.UTF_8);
-		System.out.println(size);
-		System.out.println(b.length);
-		//size-1 due to the \n
-		if(size-1 != b.length){
+	public static void createFile(String filePath, int size , byte[] data) throws IOException{
+		if(size != data.length){
 			throw new IllegalArgumentException();
 		}
 		try{
@@ -51,24 +49,18 @@ public class FileHandler {
 			Files.createFile(Paths.get(filePath));
 		}
 		FileOutputStream f = new FileOutputStream(filePath);
-		f.write(b);
+		f.write(data);
 		f.close();
 	}
 	
-/*	public static String upFile(String filePath) throws IOException{
+	public static byte[] upFile(String filePath) throws IOException{
 		File f = new File(filePath);
 		if(f.exists()){
-			BufferedReader br = new BufferedReader(new FileReader(f));
+			return Files.readAllBytes(f.toPath());
 		}
-		try{
-			Files.createFile(Paths.get(filePath));
+		else{
+			return null;
+			//file doesnt exist
 		}
-		catch(NoSuchFileException e){
-			Files.createDirectories(Paths.get(filePath).getParent());
-			Files.createFile(Paths.get(filePath));
-		}
-		FileOutputStream f = new FileOutputStream(filePath);
-		f.write(b);
-		f.close();
-	}*/
+	}
 }

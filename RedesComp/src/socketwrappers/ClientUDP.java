@@ -42,6 +42,10 @@ public class ClientUDP {
 	public int getPort() {
 		return _port;
 	}
+	
+	public boolean isConnected() {
+		return _socket.isConnected();
+	}
 
 	public void setPort(int port) throws IOException {
 		_port = port;

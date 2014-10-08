@@ -6,7 +6,9 @@ package commands;
 import java.io.IOException;
 
 import socketwrappers.ClientTCP;
+import socketwrappers.MessageTCP;
 import utils.Errors;
+import utils.FileHandler;
 import utils.Protocol;
 
 /**
@@ -18,7 +20,7 @@ public class Upload extends Command{
 	private ClientTCP _user;
 	private String _CSName;
 	private int _CSPort;
-	private String _bufferTCP;
+	private MessageTCP _bufferTCP;
 	private String _fileName;
 	
 	public Upload(ClientTCP user, String CSName, int CSPort, String[] arguments){
@@ -41,15 +43,17 @@ public class Upload extends Command{
 			_fileName = _arguments[0];
 			_user.sendToServer(Protocol.CHECK_FILE + " " + _fileName + "\n");
 			System.out.println(">> Sent upload");
-			_bufferTCP = _user.receiveFromServer();
-			_arguments =_bufferTCP.split(" ");
+			_bufferTCP = _user.receiveFromServer(Protocol.CHECK_FILE_RESPONSE_ARGS);
+			_arguments = _bufferTCP.getStrParams();
 			if(_arguments[0].equals(Protocol.CHECK_FILE_RESPONSE)){
 				if(_arguments[1].equals(Protocol.IN_USE)){
 					System.out.println("File name already in use, please try another one.");
 				}
 				else if(_arguments[1].equals(Protocol.AVAILABLE)){
 					System.out.println("File name available");
-					//upload file;
+					byte[] output = FileHandler.upFile(_fileName);
+					
+					_user.sendToServer(Protocol.CHECK_FILE + " " + _fileName + "\n");
 				}
 			}
 			else if(_arguments[0].startsWith(Protocol.ERROR)){
