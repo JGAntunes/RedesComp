@@ -18,10 +18,22 @@ import utils.Protocol;
  *
  */
 public class CS {
+	
+	// The list of files that we can find on the Storage Servers.
+	 
 	private static ListServer _listServer;
 	private static UploadServer _uploadServer;
+	
+	// The name of the machine that allocates the central server.
+	
 	private static String _name;
+	
+	// The machine's ip.
+	
 	private static String _ip;
+	
+	// The port of the CS.
+	
 	private static int _port;
 	public static final int DEFAULT_PORT = 58003;
 	private static final String RESOURCES_PATH = "./resources/FILES_LIST";
@@ -31,6 +43,11 @@ public class CS {
 		
 		private static ServerUDP _server;
 			
+		
+		/**
+		 * We get the UDP server running by creating one, we pass as an argument the port of the machine were UDP server
+		 * will run.
+		 */
 		@Override
 		public void run() {
 			try {
@@ -46,7 +63,11 @@ public class CS {
 	private static class UploadServer implements Runnable{
 		
 		private static ServerTCP _server;
-			
+		
+		/**
+		 * We get the TCP server running by creating one, we pass as an argument the port of the machine were TCP server
+		 * will run. After creating one we just have to await a connection.
+		 */
 		@Override
 		public void run() {
 			try {
@@ -61,6 +82,10 @@ public class CS {
 		}
 	}
 	
+	
+	/**
+	 * This is a parser we use to check if the command that is beeing used to call out the CS is valid.
+	 */
 	public static int initParser(String[] string) throws NumberFormatException, IOException{
 		if(string.length == 0){
 			return DEFAULT_PORT;
@@ -76,6 +101,10 @@ public class CS {
 		return 0;
 	}
 	
+	
+	/**
+	 * The parser that we use to get the command we need to call.
+	 */
 	private static void protocolParser(String string, String ip, int port) throws IOException, FileNotFoundException{
 		String[] tokens = string.split(" ");
 		String output;
@@ -109,6 +138,9 @@ public class CS {
 		}
 	}
 	
+	/**
+	 * We use this function to read lines from a file and save them to an array.
+	 */
 	private static String[] readFromFile(String path) throws IOException, FileNotFoundException, NullPointerException{
 		BufferedReader reader = new BufferedReader(new FileReader(path));
 		ArrayList <String> lines = new ArrayList<String>();
