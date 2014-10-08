@@ -30,7 +30,8 @@ public class ClientTCP {
 		_host = host;
 		_port = port;
 		_socket = new Socket(host, port);
-		//_socket.setKeepAlive(true);
+		_socket.setKeepAlive(true);
+		_socket.setSoTimeout(0);
 		if(_socket.isConnected()){
 			System.out.println("Successfully connected to: " + _host + ": " + _port);
 		}
@@ -71,7 +72,8 @@ public class ClientTCP {
 	}
 	
 	public void reconnect() throws IOException{
-		_socket.connect(new InetSocketAddress(_host, _port));
+		_socket.close();
+		_socket = new Socket(_host, _port);
 	}
 	
 	public void close() throws IOException{

@@ -103,9 +103,11 @@ public class Upload extends Command{
 				System.out.println(Errors.INVALID_COMMAND);
 			}
 		} catch (IllegalArgumentException e){
+			e.printStackTrace();
 			System.err.println(Errors.INVALID_COMMAND);
 			System.exit(-1);
 		} catch (IOException e){
+			e.printStackTrace();
 			System.err.println(Errors.IO_INPUT);
 			System.exit(-1);
 		} finally{

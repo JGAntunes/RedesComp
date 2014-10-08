@@ -21,7 +21,6 @@ public class StreamProcessors {
 		byte[] resultBuff = new byte[0];
 		byte[] buff = new byte[128];
 		int byteNum = -1;
-		int endOfLine = -1;
 
 		while ((byteNum = input.read(buff, 0, buff.length)) > -1) {
 			byte[] tempBuff = new byte[resultBuff.length + byteNum];
@@ -35,7 +34,6 @@ public class StreamProcessors {
 			System.arraycopy(buff, 0, tempBuff, resultBuff.length, endOfLine);
 			resultBuff = tempBuff;
 		}*/
-		
 		return resultBuff;
 	}
 	
