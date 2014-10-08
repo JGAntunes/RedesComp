@@ -25,18 +25,21 @@ public class MessageTCP {
 			if((char) b == ' ' || (char) b == '\n'){
 				argsBuffer = new byte[i];
 				System.arraycopy(data, offset, argsBuffer, 0, i);
+				offset = total+1;
 				processor.add(argsBuffer);
-				offset = i + 1;
 				i = 0;
 				argsRead++;
 				if(argsRead == args){
-					dataBuffer = new byte[data.length - total];
-					System.arraycopy(data, total, dataBuffer, 0, data.length - total);
+					//doesn't get \n
+					dataBuffer = new byte[data.length - offset - 1];
+					System.arraycopy(data, offset, dataBuffer, 0, data.length - offset - 1);
 					break;
 				}
 			}
+			else{
+				i++;
+			}
 			total++;
-			i++;
 		}
 		i = 0;
 		_strParams = new String[processor.size()];
@@ -44,6 +47,7 @@ public class MessageTCP {
 			_strParams[i] = new String(bs, "UTF-8");
 			i++;
 		}
+		_data =dataBuffer;
 	}
 
 	public byte[] getData() {

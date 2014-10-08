@@ -38,10 +38,7 @@ public class FileHandler {
 	 */
 	
 	public static void createFile(String filePath, int size , byte[] data) throws IOException{
-		System.out.println(size);
-		System.out.println(data.length);
-		//size-1 due to the \n
-		if(size-1 != data.length){
+		if(size != data.length){
 			throw new IllegalArgumentException();
 		}
 		try{

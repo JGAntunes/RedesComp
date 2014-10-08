@@ -47,7 +47,6 @@ public class Retrieve extends Command{
 			System.out.println(">> Sent retrieve");
 			_bufferTCP = _user.receiveFromServer(Protocol.DOWN_RESPONSE_ARGS);
 			_arguments = _bufferTCP.getStrParams();
-			System.out.println(_arguments[0] + "#" + _arguments[1] + "#" + _arguments[2] + "#");
 			if(_arguments[0].equals(Protocol.DOWN_RESPONSE)){
 				if(_arguments.length == 3){
 					if(_arguments[1].startsWith(Protocol.NOT_OK)){
