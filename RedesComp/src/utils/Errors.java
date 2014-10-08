@@ -7,6 +7,9 @@ package utils;
  * @author Joao Antunes
  *
  */
+/**
+ * All the possible errors and the string we present to the user in case one of them happens.
+ */
 public class Errors {
 	public final static String INVALID_COMMAND = new String(">> Invalid command used, please refer to the available commands.");
 	

@@ -7,6 +7,9 @@ package utils;
  * @author Joao Antunes
  *
  */
+/**
+ * All the commands and the corresponding strings.
+ */
 public class Protocol {
 	
 	public final static String LIST_COMMAND = new String("list");
