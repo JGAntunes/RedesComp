@@ -3,8 +3,10 @@
  */
 package utils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -56,9 +58,19 @@ public class FileHandler {
 	public static byte[] upFile(String filePath) throws IOException{
 		File f = new File(filePath);
 		if(f.exists()){
-			return Files.readAllBytes(f.toPath());
+			System.out.println("File exists.");
+			FileInputStream fin = new FileInputStream(filePath);
+
+			byte[] result = StreamProcessors.getByteArray(new BufferedInputStream(fin));
+
+			fin.close();
+			
+			System.out.println(new String(result, "UTF-8"));
+			byte[] ender = {'\n'};
+			return StreamProcessors.concatByte(result, ender);
 		}
 		else{
+			System.out.println("File doesn't exist.");
 			return null;
 			//file doesnt exist
 		}

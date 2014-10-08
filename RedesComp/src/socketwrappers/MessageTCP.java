@@ -20,6 +20,11 @@ public class MessageTCP {
 		int argsRead = 0;
 		byte[] argsBuffer = null;
 		byte[] dataBuffer = null;
+		
+		System.out.println(args);
+		System.out.println(data.length);
+		System.out.println(new String(data, "UTF-8"));
+		
 		ArrayList<byte[]> processor = new ArrayList<byte[]>();
 		for(byte b : data){
 			if((char) b == ' ' || (char) b == '\n'){
@@ -29,8 +34,9 @@ public class MessageTCP {
 				processor.add(argsBuffer);
 				i = 0;
 				argsRead++;
-				if(argsRead == args){
+				if(argsRead == args && (data.length - offset - 1) > 0){
 					//doesn't get \n
+					System.out.println(data.length - offset - 1);
 					dataBuffer = new byte[data.length - offset - 1];
 					System.arraycopy(data, offset, dataBuffer, 0, data.length - offset - 1);
 					break;
@@ -48,6 +54,11 @@ public class MessageTCP {
 			i++;
 		}
 		_data =dataBuffer;
+	}
+	
+	MessageTCP(String[] args, byte[] data) throws UnsupportedEncodingException{
+		_strParams = args;
+		_data = data;
 	}
 
 	public byte[] getData() {

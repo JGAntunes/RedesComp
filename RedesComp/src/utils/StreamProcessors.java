@@ -18,18 +18,18 @@ public class StreamProcessors {
 		int byteNum = -1;
 		int endOfLine = -1;
 
-		while ((byteNum = input.read(buff, 0, buff.length)) > -1 && (endOfLine = buff.toString().indexOf('\n')) == -1) {
+		while ((byteNum = input.read(buff, 0, buff.length)) > -1) {
 			byte[] tempBuff = new byte[resultBuff.length + byteNum];
 			System.arraycopy(resultBuff, 0, tempBuff, 0, resultBuff.length);
 			System.arraycopy(buff, 0, tempBuff, resultBuff.length, byteNum);
 			resultBuff = tempBuff;
 		}
-		if(endOfLine != -1){
+/*		if(endOfLine != -1){
 			byte[] tempBuff = new byte[resultBuff.length + endOfLine];
 			System.arraycopy(resultBuff, 0, tempBuff, 0, resultBuff.length);
 			System.arraycopy(buff, 0, tempBuff, resultBuff.length, endOfLine);
 			resultBuff = tempBuff;
-		}
+		}*/
 		
 		return resultBuff;
 	}
@@ -37,7 +37,8 @@ public class StreamProcessors {
 	public static byte[] concatByte(byte[] init, byte[] end) throws IOException{
 		byte[] resultBuff = new byte[init.length + end.length];
 		System.arraycopy(init, 0, resultBuff, 0, init.length);
-		System.arraycopy(end, 0, resultBuff, init.length, end.length);	
+		System.arraycopy(end, 0, resultBuff, init.length, end.length);
+		System.out.println(new String(resultBuff, "UTF-8"));
 		return resultBuff;
 	}
 }
