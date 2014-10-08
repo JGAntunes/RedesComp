@@ -12,6 +12,11 @@ import java.io.IOException;
  */
 public class StreamProcessors {
 	
+	/**
+	 * In this function like in the previous we also get and input stream for the socket, after that we read from that stream 
+	 * to another one, we used three buffers to aid us
+	 */
+	
 	public static byte[] getByteArray(BufferedInputStream input) throws IOException{
 		byte[] resultBuff = new byte[0];
 		byte[] buff = new byte[128];
