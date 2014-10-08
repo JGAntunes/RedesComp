@@ -115,7 +115,8 @@ public class ServerTCP{
 		_inputString.close();
 		return out;
 	}
-
+	
+	
 	public MessageTCP receiveByteMessage(int expectedArgs) throws IOException{
 		return new MessageTCP(StreamProcessors.getByteArray(new BufferedInputStream(_clientSocket.getInputStream())), expectedArgs);
 	}

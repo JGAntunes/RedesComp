@@ -13,8 +13,8 @@ import java.io.IOException;
 public class StreamProcessors {
 	
 	/**
-	 * In this function like in the previous we also get and input stream for the socket, after that we read from that stream 
-	 * to another one, we used three buffers to aid us
+	 * In this function we get an input stream to a socket, from where we need to read information. Then while there is something to read from the strem we will
+	 * read the bytes and tranfer them trough the arrays till all information is retrieved from the stream and we return the result buffer.
 	 */
 	
 	public static byte[] getByteArray(BufferedInputStream input) throws IOException{
@@ -39,6 +39,10 @@ public class StreamProcessors {
 		return resultBuff;
 	}
 	
+	/**
+	 * This function concatenates two arrays of bytes. An array called resultBuff is created and all the data from the first array is copied and then then we do the same
+	 * for the second array, returning the array in the end with the data from the two arrays concatenated.
+	 */
 	public static byte[] concatByte(byte[] init, byte[] end) throws IOException{
 		byte[] resultBuff = new byte[init.length + end.length];
 		System.arraycopy(init, 0, resultBuff, 0, init.length);
