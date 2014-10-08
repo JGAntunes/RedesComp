@@ -33,4 +33,11 @@ public class StreamProcessors {
 		
 		return resultBuff;
 	}
+	
+	public static byte[] concatByte(byte[] init, byte[] end) throws IOException{
+		byte[] resultBuff = new byte[init.length + end.length];
+		System.arraycopy(init, 0, resultBuff, 0, init.length);
+		System.arraycopy(end, 0, resultBuff, init.length, end.length);	
+		return resultBuff;
+	}
 }

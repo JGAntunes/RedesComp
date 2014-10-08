@@ -53,20 +53,14 @@ public class FileHandler {
 		f.close();
 	}
 	
-/*	public static String upFile(String filePath) throws IOException{
+	public static byte[] upFile(String filePath) throws IOException{
 		File f = new File(filePath);
 		if(f.exists()){
-			BufferedReader br = new BufferedReader(new FileReader(f));
+			return Files.readAllBytes(f.toPath());
 		}
-		try{
-			Files.createFile(Paths.get(filePath));
+		else{
+			return null;
+			//file doesnt exist
 		}
-		catch(NoSuchFileException e){
-			Files.createDirectories(Paths.get(filePath).getParent());
-			Files.createFile(Paths.get(filePath));
-		}
-		FileOutputStream f = new FileOutputStream(filePath);
-		f.write(b);
-		f.close();
-	}*/
+	}
 }

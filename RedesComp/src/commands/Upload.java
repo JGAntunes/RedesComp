@@ -8,6 +8,7 @@ import java.io.IOException;
 import socketwrappers.ClientTCP;
 import socketwrappers.MessageTCP;
 import utils.Errors;
+import utils.FileHandler;
 import utils.Protocol;
 
 /**
@@ -50,7 +51,9 @@ public class Upload extends Command{
 				}
 				else if(_arguments[1].equals(Protocol.AVAILABLE)){
 					System.out.println("File name available");
-					//upload file;
+					byte[] output = FileHandler.upFile(_fileName);
+					
+					_user.sendToServer(Protocol.CHECK_FILE + " " + _fileName + "\n");
 				}
 			}
 			else if(_arguments[0].startsWith(Protocol.ERROR)){
