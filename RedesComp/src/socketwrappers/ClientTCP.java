@@ -38,7 +38,6 @@ public class ClientTCP {
 		else{
 			System.out.println("Failded to connect to server.");
 		}
-		_output = new DataOutputStream(_socket.getOutputStream());
 	}
 	
 	public int getPort() {

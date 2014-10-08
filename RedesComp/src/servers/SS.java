@@ -19,11 +19,18 @@ public class SS {
 	private int _port;
 	private static final int DEFAULT_PORT = 59000;
 	
+	/**
+	 * Storage server constructor, receives as arguments the name of the machine and the port were the server will run.
+	 */
 	public SS(String name, int port) throws IOException, SocketException{
 		_name = name;
 		_port = port;
 	}
 	
+	/**
+	 * We get the TCP server running by creating one, we pass as an argument the port of the machine were TCP server will run. After creating one we 
+	 * just have to await a connection.
+	 */
 	private class StorageServer implements Runnable{
 		
 		private ServerTCP _server;
@@ -42,6 +49,9 @@ public class SS {
 		}
 	}
 	
+	/**
+	 * This is the parser we use to call out the SS if the command used is valid.
+	 */
 	private static int initParser(String[] string) throws NumberFormatException, IOException{
 		if(string.length == 0){
 			return DEFAULT_PORT;
@@ -57,6 +67,9 @@ public class SS {
 		return 0;
 	}
 	
+	/**
+	 * The parser that we use to call out a command, if it is a valid one.
+	 */
 	private static void protocolParser(String string) throws IOException{
 		String[] tokens = string.split(" ");
 		if(tokens.length == 0){

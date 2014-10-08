@@ -54,6 +54,9 @@ public class User {
 		}
 	}
 	
+	/**
+	 * This is the parser we use to call out the user if the command used is valid.
+	 */
 	public static void initParser(String[] args) throws IllegalArgumentException{
 		_CSPort = CS.DEFAULT_PORT;
 		_CSName = "localhost";
@@ -84,6 +87,9 @@ public class User {
 		}
 	}
 	
+	/**
+	 * This is the function we use to call out the commands.
+	 */
 	public static boolean emitter(String input) throws UnknownHostException, IOException{
 		Command com = null;
 		if(input.equals(Protocol.LIST_COMMAND)){
@@ -126,6 +132,9 @@ public class User {
 		return true;
 	}
 	
+	/**
+	 * Function used to set the port and name of the storage server that we have to acess to retrieve or upload any file.
+	 */
 	public static void setSS(String name, int port){
 		_SSName = name;
 		_SSPort = port;

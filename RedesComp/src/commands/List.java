@@ -22,6 +22,11 @@ public class List extends Command{
 	private int _CSPort;
 	private MessageUDP _bufferUDP;
 	
+	/**
+	 * List command constructor that receives as arguments an UDP client user, the central server name , the central server port
+	 * and an array of arguments.
+	 * 
+	 */
 	public List(ClientUDP user, String CSName, int CSPort, String[] arguments){
 		_code = Protocol.LIST_COMMAND;
 		_arguments = arguments;
@@ -32,6 +37,13 @@ public class List extends Command{
 	
 	/* (non-Javadoc)
 	 * @see commands.Command#run()
+	 */
+	
+	/**
+	 * The use this command the client who is using an UDP protocol sends out a message to the central server with the command 
+	 * string and awaits a response with the port and the ip adress of the SS that we have to acess to retrieve any file, we also 
+	 * receive the number of files and the list. If the lenght of the arguments is bigger than 4 we assume right away that the
+	 * protocol wasn't followed.
 	 */
 	@Override
 	public void run() {

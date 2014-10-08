@@ -25,6 +25,10 @@ public class Retrieve extends Command{
 	private MessageTCP _bufferTCP;
 	private String _fileName;
 	
+	/**
+	 * The retrieve command constructor, receives as arguments a TCP client user, the port and name of the storage server we 
+	 * to acess to retrieve the file, and an array of arguments.
+	 */
 	public Retrieve(ClientTCP user, String SSName, int SSPort, String[] arguments){
 		_code = Protocol.RETRIEVE_COMMAND;
 		_arguments = arguments;
@@ -35,6 +39,15 @@ public class Retrieve extends Command{
 	
 	/* (non-Javadoc)
 	 * @see commands.Command#run()
+	 */
+	/**
+	 * To use this command first we check if the number of arguments exceeds 1, if its does we assume that the arguments given
+	 * int the command are wrong.
+	 * If everything is ok we proceed to get the name of the file we need to retrieve from the SS, after that we request the file 
+	 * and await for the SS to respond. As we receive a response we check if the number of arguments is 3, otherwise the protocol
+	 * wasn't followed. First we check the first argument to verify if the file we want is on the SS, if not we end the communication
+	 * and print out an error message, otherwise we create a file to were we sent all the data that the SS sent us.
+	 * 
 	 */
 	@Override
 	public void run() {

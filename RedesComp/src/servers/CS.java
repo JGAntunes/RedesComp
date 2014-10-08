@@ -18,22 +18,12 @@ import utils.Protocol;
  *
  */
 public class CS {
-	
-	// The list of files that we can find on the Storage Servers.
+
 	 
 	private static ListServer _listServer;
 	private static UploadServer _uploadServer;
-	
-	// The name of the machine that allocates the central server.
-	
 	private static String _name;
-	
-	// The machine's ip.
-	
 	private static String _ip;
-	
-	// The port of the CS.
-	
 	private static int _port;
 	public static final int DEFAULT_PORT = 58003;
 	private static final String RESOURCES_PATH = "./resources/FILES_LIST";
@@ -45,8 +35,7 @@ public class CS {
 			
 		
 		/**
-		 * We get the UDP server running by creating one, we pass as an argument the port of the machine were UDP server
-		 * will run.
+		 * We get the UDP server running by creating one, we pass as an argument the port of the machine were UDP server will run.
 		 */
 		@Override
 		public void run() {
@@ -65,8 +54,8 @@ public class CS {
 		private static ServerTCP _server;
 		
 		/**
-		 * We get the TCP server running by creating one, we pass as an argument the port of the machine were TCP server
-		 * will run. After creating one we just have to await a connection.
+		 * We get the TCP server running by creating one, we pass as an argument the port of the machine were TCP server will run. After creating one we 
+		 * just have to await a connection.
 		 */
 		@Override
 		public void run() {
@@ -84,7 +73,7 @@ public class CS {
 	
 	
 	/**
-	 * This is a parser we use to check if the command that is beeing used to call out the CS is valid.
+	 * This is the parser we use to call out the CS if the command used is valid.
 	 */
 	public static int initParser(String[] string) throws NumberFormatException, IOException{
 		if(string.length == 0){
@@ -103,7 +92,7 @@ public class CS {
 	
 	
 	/**
-	 * The parser that we use to get the command we need to call.
+	 * The parser that we use to call out a command, if it is a valid one.
 	 */
 	private static void protocolParser(String string, String ip, int port) throws IOException, FileNotFoundException{
 		String[] tokens = string.split(" ");
