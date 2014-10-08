@@ -8,6 +8,7 @@ import java.lang.IllegalArgumentException;
 import java.nio.file.FileAlreadyExistsException;
 
 import socketwrappers.ClientTCP;
+import socketwrappers.MessageTCP;
 import utils.Errors;
 import utils.FileHandler;
 import utils.LocalPaths;
@@ -21,7 +22,7 @@ public class Retrieve extends Command{
 	private ClientTCP _user;
 	private String _SSName;
 	private int _SSPort;
-	private String _bufferTCP;
+	private MessageTCP _bufferTCP;
 	private String _fileName;
 	
 	public Retrieve(ClientTCP user, String SSName, int SSPort, String[] arguments){
@@ -44,20 +45,18 @@ public class Retrieve extends Command{
 			_fileName = _arguments[0];
 			_user.sendToServer(Protocol.DOWN_FILE + " " + _fileName + "\n");
 			System.out.println(">> Sent retrieve");
-			_bufferTCP = _user.receiveFromServer();
-			System.out.println(_bufferTCP);
-			_arguments =_bufferTCP.split(" ");
+			_bufferTCP = _user.receiveFromServer(Protocol.DOWN_RESPONSE_ARGS);
+			_arguments = _bufferTCP.getStrParams();
 			if(_arguments[0].equals(Protocol.DOWN_RESPONSE)){
 				System.out.println(_arguments.length);
-				if(_arguments.length > 3){
+				if(_arguments.length == 3){
 					if(_arguments[1].equals(Protocol.NOT_OK)){
 						System.out.println("Requested file isn't available. Please try again.");
 					}
 					else if(_arguments[1].equals(Protocol.OK)){
 						System.out.println("File received!");
 						try{
-							System.out.println(LocalPaths.DOWNLOADS + _fileName);
-							FileHandler.createFile(LocalPaths.DOWNLOADS + _fileName, Integer.parseInt(_arguments[2]), _arguments[3]);
+							FileHandler.createFile(LocalPaths.DOWNLOADS + _fileName, Integer.parseInt(_arguments[2]), _bufferTCP.getData());
 						} catch(NumberFormatException e){
 							e.printStackTrace();
 							System.err.println(Errors.INVALID_PROTOCOL);
@@ -91,6 +90,7 @@ public class Retrieve extends Command{
 			System.err.println(Errors.INVALID_COMMAND);
 			System.exit(-1);
 		} catch (IOException e){
+			e.printStackTrace();
 			System.err.println(Errors.IO_INPUT);
 			System.exit(-1);
 		} finally{

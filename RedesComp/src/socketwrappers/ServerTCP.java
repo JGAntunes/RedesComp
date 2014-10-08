@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 
+import utils.StreamProcessors;
+
 /**
  * 
  */
@@ -77,20 +79,8 @@ public class ServerTCP{
 		return out;
 	}
 	
-	public byte[] receiveByteMessage() throws IOException{
-		byte[] resultBuff = new byte[0];
-		byte[] buff = new byte[133169152];
-		int k = -1;
-		_inputByte = new BufferedInputStream(_clientSocket.getInputStream());
-
-		while ((k = _inputByte.read(buff, 0, buff.length)) > -1) {
-			byte[] tempBuff = new byte[resultBuff.length + k];
-			System.arraycopy(resultBuff, 0, tempBuff, 0, resultBuff.length);
-			System.arraycopy(buff, 0, tempBuff, resultBuff.length, k);
-			resultBuff = tempBuff;
-		}
-		_inputByte.close();
-		return resultBuff;
+	public MessageTCP receiveByteMessage(int expectedArgs) throws IOException{
+		return new MessageTCP(StreamProcessors.getByteArray(new BufferedInputStream(_clientSocket.getInputStream())), expectedArgs);
 	}
 
 }

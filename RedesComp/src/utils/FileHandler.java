@@ -22,12 +22,11 @@ import java.nio.file.Paths;
  *
  */
 public class FileHandler {
-	public static void createFile(String filePath, int size ,String data) throws IOException{
-		byte[] b = data.getBytes(StandardCharsets.UTF_8);
+	public static void createFile(String filePath, int size , byte[] data) throws IOException{
 		System.out.println(size);
-		System.out.println(b.length);
+		System.out.println(data.length);
 		//size-1 due to the \n
-		if(size-1 != b.length){
+		if(size-1 != data.length){
 			throw new IllegalArgumentException();
 		}
 		try{
@@ -38,7 +37,7 @@ public class FileHandler {
 			Files.createFile(Paths.get(filePath));
 		}
 		FileOutputStream f = new FileOutputStream(filePath);
-		f.write(b);
+		f.write(data);
 		f.close();
 	}
 	
