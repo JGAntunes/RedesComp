@@ -4,6 +4,7 @@
 package utils;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Scanner;
@@ -23,8 +24,10 @@ public class StreamProcessors {
 	 */
 	
 	public static MessageTCP getTCPInput(BufferedInputStream input, int argNum, boolean size) throws IOException{
-		Scanner sc = new Scanner(input);
+		
+		byte[] inputBuff = readFile(input);
 		byte[] resultBuff = null;
+		Scanner sc = new Scanner(new ByteArrayInputStream(inputBuff));
 		String[] args = new String[argNum];
 		
 		args[0] = sc.next(); // tratar exepções
@@ -34,6 +37,7 @@ public class StreamProcessors {
 		System.out.println(args[0]);
 		if(argNum == 2){
 			args[1] = sc.next(); // tratar exepções
+			System.out.println(args[1]);
 		}
 		
 		if(argNum == 3){
@@ -41,13 +45,25 @@ public class StreamProcessors {
 		}
 		
 		if(size){
-			int fileSize = 0;	
+			int fileSize = 0;
+			int offset = 0;
+			
 			System.out.println("Checking size");
 			
 			args[args.length-1] = sc.next(Pattern.compile("([0-9]+)"));
-			fileSize = Integer.parseInt(args[args.length-1]);
+			for(String s: args){
+				offset += s.length() + 1;
+			}
 			
-			resultBuff = readFile(input, fileSize);
+			resultBuff = new byte[inputBuff.length - offset];
+			System.arraycopy(inputBuff, offset, resultBuff, 0, resultBuff.length);
+			
+			if((char) resultBuff[resultBuff.length - 1] == '\n'){
+				System.out.println("Isto é um \n que foi lido.");
+				//message not ending with \n
+			}
+			
+			fileSize = Integer.parseInt(args[args.length-1]);
 			
 			/*if((char) resultBuff[resultBuff.length - 1] == '\n'){
 				System.out.println("Isto é um \n que foi lido.");
@@ -57,9 +73,8 @@ public class StreamProcessors {
 		return new MessageTCP(args, resultBuff);
 	}
 	
-	public static byte[] readFile(BufferedInputStream input, int fileSize) throws IOException{
+	public static byte[] readFile(BufferedInputStream input) throws IOException{
 		
-		System.out.println("FILE SIZE:" + fileSize);
 		int byteNum = -1;
 		int initBuff = 1024;
 		int byteTotal = 0;
@@ -71,12 +86,13 @@ public class StreamProcessors {
 		buff = new byte[initBuff];
 		
 		byte[] resultBuff = new byte[0];
-		while ((fileSize > byteTotal) && ((byteNum = input.read(buff, 0, buff.length)) > -1)) {
-			resultBuff = concatByte(resultBuff, resultBuff.length, buff, byteNum);
-			byteTotal += byteNum;		
+		while ((byteNum = input.read(buff, 0, buff.length)) > -1) {
+			byte[] tbuff = new byte[resultBuff.length + byteNum];
+			System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length);
+			System.arraycopy(buff, 0, tbuff, resultBuff.length, byteNum);
+			resultBuff = tbuff;
 		}
 		System.out.println("Total: " + byteTotal);
-		System.out.println("File: " + fileSize);
 		return resultBuff;
 	}
 	

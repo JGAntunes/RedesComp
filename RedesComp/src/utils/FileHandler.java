@@ -63,8 +63,9 @@ public class FileHandler {
 		if(f.exists()){
 			System.out.println("File exists.");
 			FileInputStream fin = new FileInputStream(filePath);
-
-			byte[] result = StreamProcessors.readFile(new BufferedInputStream(fin), (int) f.length());
+			DataInputStream din = new DataInputStream(fin);
+			byte[] result = new byte[(int)f.length()];
+			din.readFully(result);
 
 			fin.close();
 

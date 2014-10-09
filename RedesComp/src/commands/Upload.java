@@ -53,7 +53,7 @@ public class Upload extends Command{
 			if(!file.exists()){
 				throw new FileNotFoundException();
 			}
-			_user.sendToServer((Protocol.CHECK_FILE + " " + file.getName() + '\n').getBytes());
+			_user.sendToServer( new String(Protocol.CHECK_FILE + " " + file.getName()).getBytes());
 			
 			System.out.println(file.getName());
 			

@@ -84,14 +84,15 @@ public class ClientTCP {
 		_socket.close();
 	}
 	
-	/*public void sendToServer(String message) throws IOException{
+	public void sendToServer(String message) throws IOException{
 		System.out.println("I'm about to being sent!#" + message + "#");
 		PrintWriter out = new PrintWriter(_output, true);
-		out.println(message + '\n');
-	}*/
+		out.println(message);
+	}
 	
 	public void sendToServer(byte[] message) throws IOException{
 		_output.write(message, 0, message.length);
+		_output.flush();
 	}
 	
 /*	public void sendToServer(MessageTCP message) throws IOException{
