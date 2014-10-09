@@ -34,13 +34,10 @@ public class StreamProcessors {
 		System.out.println(args[0]);
 		if(argNum == 2){
 			args[1] = sc.next(); // tratar exepções
-			
-			System.out.println(args[1]);
 		}
 		
 		if(argNum == 3){
 			args[1] = sc.next(); // tratar exepções
-			System.out.println(args[1]);
 		}
 		
 		if(size){
@@ -57,7 +54,6 @@ public class StreamProcessors {
 				//message not ending with \n
 			}*/
 		}
-		System.out.println("I've exited the while!");
 		return new MessageTCP(args, resultBuff);
 	}
 	
@@ -75,17 +71,12 @@ public class StreamProcessors {
 		buff = new byte[initBuff];
 		
 		byte[] resultBuff = new byte[0];
-		
-		System.out.println(resultBuff.length);
 		while ((fileSize > byteTotal) && ((byteNum = input.read(buff, 0, buff.length)) > -1)) {
-			System.out.println("I'm reading in the while!");
 			resultBuff = concatByte(resultBuff, resultBuff.length, buff, byteNum);
-			byteTotal += byteNum;
-			System.out.println("Total: " + byteTotal);
-			System.out.println("File: " + fileSize);
-			System.out.println("Buff: " + byteNum);
-			
+			byteTotal += byteNum;		
 		}
+		System.out.println("Total: " + byteTotal);
+		System.out.println("File: " + fileSize);
 		return resultBuff;
 	}
 	

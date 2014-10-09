@@ -70,17 +70,14 @@ public class Upload extends Command{
 					byte[] output = FileHandler.upFile(_fileName);
 					byte[] command = new String(Protocol.UP_USER_FILE + " " + (output.length-1) + " ").getBytes();
 					byte[] resultOut = StreamProcessors.concatByte(command, command.length, output, output.length);
-					System.out.println(new String(resultOut , "UTF-8") + '#');
 					_user.sendToServer(resultOut);
 					
 					System.out.println("File sent");
 					
 					_bufferTCP = _user.receiveFromServer(Protocol.UP_USER_RESPONSE_ARGS, false);
 					_arguments = _bufferTCP.getStrParams();
-					System.out.println(_user.isConnected());
-					System.out.println(_arguments[0]);
 					if(_arguments[0].equals(Protocol.UP_USER_RESPONSE)){
-						if(_arguments.length == 3){
+						if(_arguments.length == 2){
 							if(_arguments[1].startsWith(Protocol.NOT_OK)){
 								System.out.println("Problems uploading file. Please try again.");
 							}

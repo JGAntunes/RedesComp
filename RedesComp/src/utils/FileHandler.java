@@ -67,8 +67,7 @@ public class FileHandler {
 			byte[] result = StreamProcessors.readFile(new BufferedInputStream(fin), (int) f.length());
 
 			fin.close();
-			
-			System.out.println("Just created file: " + new String(result, "UTF-8"));
+
 			byte[] ender = {'\n'};
 			return StreamProcessors.concatByte(result, result.length, ender, 1);
 		}
