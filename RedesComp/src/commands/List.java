@@ -27,10 +27,9 @@ public class List extends Command{
 	 * and an array of arguments.
 	 * 
 	 */
-	public List(ClientUDP user, String CSName, int CSPort, String[] arguments){
+	public List(String CSName, int CSPort, String[] arguments){
 		_code = Protocol.LIST_COMMAND;
 		_arguments = arguments;
-		_user = user;
 		_CSName = CSName;
 		_CSPort = CSPort;
 	}
@@ -48,6 +47,7 @@ public class List extends Command{
 	@Override
 	public void run() {
 		try{
+			_user = new ClientUDP();
 			_user.sendToServer(new MessageUDP(_CSName, _CSPort, Protocol.LIST + "\n"));
 			System.out.println(">> Sent list");
 			_bufferUDP = _user.receiveFromServer();
@@ -75,6 +75,7 @@ public class List extends Command{
 				System.out.println(Errors.INVALID_COMMAND);
 			}
 		} catch (IOException e){
+			e.printStackTrace();
 			System.err.println(Errors.IO_INPUT);
 			System.exit(-1);
 		} finally{

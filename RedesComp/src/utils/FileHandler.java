@@ -41,9 +41,11 @@ public class FileHandler {
 	 */
 	
 	public static void createFile(String filePath, int size , byte[] data) throws IOException{
-		if(size != data.length){
+		System.out.println(data.length);
+		System.out.println(size);
+		/*if(size != data.length){
 			throw new IllegalArgumentException();
-		}
+		}*/
 		try{
 			Files.createFile(Paths.get(filePath));
 		}
@@ -66,9 +68,9 @@ public class FileHandler {
 
 			fin.close();
 			
-			System.out.println(new String(result, "UTF-8"));
+			System.out.println("Just created file: " + new String(result, "UTF-8"));
 			byte[] ender = {'\n'};
-			return StreamProcessors.concatByte(result, ender);
+			return StreamProcessors.concatByte(result, result.length, ender, 1);
 		}
 		else{
 			System.out.println("File doesn't exist.");

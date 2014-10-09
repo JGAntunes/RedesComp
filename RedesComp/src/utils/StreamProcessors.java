@@ -27,11 +27,15 @@ public class StreamProcessors {
 		byte[] resultBuff = null;
 		String[] args = new String[argNum];
 		
-		args[0] = sc.next(Pattern.compile("^([A-Z]{3})")); // tratar exepções
+		args[0] = sc.next(); // tratar exepções
+		
+		//args[0] = sc.next();
 
 		System.out.println(args[0]);
 		if(argNum == 2){
-			args[1] = sc.nextLine(); // tratar exepções
+			args[1] = sc.next(); // tratar exepções
+			
+			System.out.println(args[1]);
 		}
 		
 		if(argNum == 3){
@@ -48,12 +52,12 @@ public class StreamProcessors {
 			
 			resultBuff = readFile(input, fileSize);
 			
-			if((char) resultBuff[resultBuff.length - 1] != '\n'){
+			/*if((char) resultBuff[resultBuff.length - 1] == '\n'){
+				System.out.println("Isto é um \n que foi lido.");
 				//message not ending with \n
-			}
+			}*/
 		}
 		System.out.println("I've exited the while!");
-		sc.close();
 		return new MessageTCP(args, resultBuff);
 	}
 	
@@ -61,21 +65,25 @@ public class StreamProcessors {
 		
 		System.out.println("FILE SIZE:" + fileSize);
 		int byteNum = -1;
+		int initBuff = 1024;
 		int byteTotal = 0;
-		byte[] buff = new byte[128];
+		byte[] buff;
+		//byte[] resultBuff = new byte[0];
+		/*if(fileSize+1 < initBuff){
+			initBuff = fileSize;
+		}*/
+		buff = new byte[initBuff];
+		
 		byte[] resultBuff = new byte[0];
-		while ((byteNum = input.read(buff, 0, buff.length)) > -1) {
+		
+		System.out.println(resultBuff.length);
+		while ((fileSize > byteTotal) && ((byteNum = input.read(buff, 0, buff.length)) > -1)) {
 			System.out.println("I'm reading in the while!");
-			byte[] tempBuff = new byte[resultBuff.length + byteNum];
-			System.arraycopy(resultBuff, 0, tempBuff, 0, resultBuff.length);
-			System.arraycopy(buff, 0, tempBuff, resultBuff.length, byteNum);
-			resultBuff = tempBuff;
-			System.out.println(byteTotal);
-			
+			resultBuff = concatByte(resultBuff, resultBuff.length, buff, byteNum);
 			byteTotal += byteNum;
-			if(byteTotal >= fileSize){
-				break;
-			}
+			System.out.println("Total: " + byteTotal);
+			System.out.println("File: " + fileSize);
+			System.out.println("Buff: " + byteNum);
 			
 		}
 		return resultBuff;
@@ -85,11 +93,11 @@ public class StreamProcessors {
 	 * This function concatenates two arrays of bytes. An array called resultBuff is created and all the data from the first array is copied and then then we do the same
 	 * for the second array, returning the array in the end with the data from the two arrays concatenated.
 	 */
-	public static byte[] concatByte(byte[] init, byte[] end) throws IOException{
-		byte[] resultBuff = new byte[init.length + end.length];
-		System.arraycopy(init, 0, resultBuff, 0, init.length);
-		System.arraycopy(end, 0, resultBuff, init.length, end.length);
-		System.out.println(new String(resultBuff, "UTF-8"));
+	public static byte[] concatByte(byte[] init, int initLen, byte[] end, int endLen) throws IOException{
+		byte[] resultBuff = new byte[initLen + endLen];
+		System.arraycopy(init, 0, resultBuff, 0, initLen);
+		System.arraycopy(end, 0, resultBuff, initLen, endLen);
+		//System.out.println("Just concated: " + new String(resultBuff, "UTF-8"));
 		return resultBuff;
 	}
 }

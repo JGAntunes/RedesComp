@@ -93,13 +93,13 @@ public class User {
 	public static boolean emitter(String input) throws UnknownHostException, IOException{
 		Command com = null;
 		if(input.equals(Protocol.LIST_COMMAND)){
-			com = new List(new ClientUDP(), _CSName, _CSPort, null);
+			com = new List(_CSName, _CSPort, null);
 		}
 		else if(input.startsWith(Protocol.RETRIEVE_COMMAND + " ")){
 			if(_SSName != null){
 				String[] arguments = input.split(Protocol.RETRIEVE_COMMAND + " ");
 				if(arguments.length == 2){
-					com = new Retrieve(new ClientTCP(_SSName, _SSPort), _SSName, _SSPort, arguments[1].split(" "));
+					com = new Retrieve(_SSName, _SSPort, arguments[1].split(" "));
 				}
 				else{
 					System.out.println(Errors.INVALID_COMMAND);
@@ -112,7 +112,7 @@ public class User {
 		else if(input.startsWith(Protocol.UPLOAD_COMMAND + " ")){
 			String[] arguments = input.split(Protocol.UPLOAD_COMMAND + " ");
 			if(arguments.length == 2){
-				com = new Upload(new ClientTCP(_CSName, _CSPort), _CSName, _CSPort, arguments[1].split(" "));
+				com = new Upload(_CSName, _CSPort, arguments[1].split(" "));
 			}
 			else{
 				System.out.println(Errors.INVALID_COMMAND);

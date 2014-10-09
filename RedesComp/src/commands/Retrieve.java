@@ -29,10 +29,9 @@ public class Retrieve extends Command{
 	 * The retrieve command constructor, receives as arguments a TCP client user, the port and name of the storage server we 
 	 * to acess to retrieve the file, and an array of arguments.
 	 */
-	public Retrieve(ClientTCP user, String SSName, int SSPort, String[] arguments){
+	public Retrieve(String SSName, int SSPort, String[] arguments){
 		_code = Protocol.RETRIEVE_COMMAND;
 		_arguments = arguments;
-		_user = user;
 		_SSName = SSName;
 		_SSPort = SSPort;
 	}
@@ -52,11 +51,12 @@ public class Retrieve extends Command{
 	@Override
 	public void run() {
 		try{
+			_user = new ClientTCP(_SSName, _SSPort);
 			if(_arguments.length > 1){
 				throw new IllegalArgumentException();
 			}
 			_fileName = _arguments[0];
-			_user.sendToServer(Protocol.DOWN_FILE + " " + _fileName);
+			_user.sendToServer(new String(Protocol.DOWN_FILE + " " + _fileName + '\n').getBytes());
 			System.out.println(">> Sent retrieve");
 			_bufferTCP = _user.receiveFromServer(Protocol.DOWN_RESPONSE_ARGS, true);
 			_arguments = _bufferTCP.getStrParams();

@@ -28,10 +28,9 @@ public class Upload extends Command{
 	private MessageTCP _bufferTCP;
 	private String _fileName;
 	
-	public Upload(ClientTCP user, String CSName, int CSPort, String[] arguments){
+	public Upload(String CSName, int CSPort, String[] arguments){
 		_code = Protocol.UPLOAD_COMMAND;
 		_arguments = arguments;
-		_user = user;
 		_CSName = CSName;
 		_CSPort = CSPort;
 	}
@@ -42,6 +41,7 @@ public class Upload extends Command{
 	@Override
 	public void run() {
 		try{
+			_user = new ClientTCP(_CSName, _CSPort);
 			if(_arguments.length > 2){
 				throw new IllegalArgumentException();
 			}
@@ -53,7 +53,7 @@ public class Upload extends Command{
 			if(!file.exists()){
 				throw new FileNotFoundException();
 			}
-			_user.sendToServer(Protocol.CHECK_FILE + " " + file.getName() + '\n');
+			_user.sendToServer((Protocol.CHECK_FILE + " " + file.getName() + '\n').getBytes());
 			
 			System.out.println(file.getName());
 			
@@ -67,10 +67,10 @@ public class Upload extends Command{
 				else if(_arguments[1].equals(Protocol.AVAILABLE)){
 					
 					System.out.println("File name available");
-					
 					byte[] output = FileHandler.upFile(_fileName);
-					
-					byte[] resultOut = StreamProcessors.concatByte(new String(Protocol.UP_USER_FILE + " " + (output.length - 1) + " ").getBytes(), output);
+					byte[] command = new String(Protocol.UP_USER_FILE + " " + (output.length-1) + " ").getBytes();
+					byte[] resultOut = StreamProcessors.concatByte(command, command.length, output, output.length);
+					System.out.println(new String(resultOut , "UTF-8") + '#');
 					_user.sendToServer(resultOut);
 					
 					System.out.println("File sent");
