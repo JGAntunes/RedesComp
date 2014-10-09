@@ -4,7 +4,12 @@
 package utils;
 
 import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
+import socketwrappers.MessageTCP;
 
 /**
  * @author Joao Antunes
@@ -17,23 +22,62 @@ public class StreamProcessors {
 	 * read the bytes and tranfer them trough the arrays till all information is retrieved from the stream and we return the result buffer.
 	 */
 	
-	public static byte[] getByteArray(BufferedInputStream input) throws IOException{
-		byte[] resultBuff = new byte[0];
-		byte[] buff = new byte[128];
-		int byteNum = -1;
+	public static MessageTCP getTCPInput(BufferedInputStream input, int argNum, boolean size) throws IOException{
+		Scanner sc = new Scanner(input);
+		byte[] resultBuff = null;
+		String[] args = new String[argNum];
+		
+		args[0] = sc.next(Pattern.compile("^([A-Z]{3})")); // tratar exepções
 
+		System.out.println(args[0]);
+		if(argNum == 2){
+			args[1] = sc.nextLine(); // tratar exepções
+		}
+		
+		if(argNum == 3){
+			args[1] = sc.next(); // tratar exepções
+			System.out.println(args[1]);
+		}
+		
+		if(size){
+			int fileSize = 0;	
+			System.out.println("Checking size");
+			
+			args[args.length-1] = sc.next(Pattern.compile("([0-9]+)"));
+			fileSize = Integer.parseInt(args[args.length-1]);
+			
+			resultBuff = readFile(input, fileSize);
+			
+			if((char) resultBuff[resultBuff.length - 1] != '\n'){
+				//message not ending with \n
+			}
+		}
+		System.out.println("I've exited the while!");
+		sc.close();
+		return new MessageTCP(args, resultBuff);
+	}
+	
+	public static byte[] readFile(BufferedInputStream input, int fileSize) throws IOException{
+		
+		System.out.println("FILE SIZE:" + fileSize);
+		int byteNum = -1;
+		int byteTotal = 0;
+		byte[] buff = new byte[128];
+		byte[] resultBuff = new byte[0];
 		while ((byteNum = input.read(buff, 0, buff.length)) > -1) {
+			System.out.println("I'm reading in the while!");
 			byte[] tempBuff = new byte[resultBuff.length + byteNum];
 			System.arraycopy(resultBuff, 0, tempBuff, 0, resultBuff.length);
 			System.arraycopy(buff, 0, tempBuff, resultBuff.length, byteNum);
 			resultBuff = tempBuff;
+			System.out.println(byteTotal);
+			
+			byteTotal += byteNum;
+			if(byteTotal >= fileSize){
+				break;
+			}
+			
 		}
-/*		if(endOfLine != -1){
-			byte[] tempBuff = new byte[resultBuff.length + endOfLine];
-			System.arraycopy(resultBuff, 0, tempBuff, 0, resultBuff.length);
-			System.arraycopy(buff, 0, tempBuff, resultBuff.length, endOfLine);
-			resultBuff = tempBuff;
-		}*/
 		return resultBuff;
 	}
 	

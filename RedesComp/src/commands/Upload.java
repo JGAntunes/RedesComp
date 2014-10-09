@@ -58,7 +58,7 @@ public class Upload extends Command{
 			System.out.println(file.getName());
 			
 			System.out.println(">> Sent upload");
-			_bufferTCP = _user.receiveFromServer(Protocol.CHECK_FILE_RESPONSE_ARGS);
+			_bufferTCP = _user.receiveFromServer(Protocol.CHECK_FILE_RESPONSE_ARGS, false);
 			_arguments = _bufferTCP.getStrParams();
 			if(_arguments[0].equals(Protocol.CHECK_FILE_RESPONSE)){
 				if(_arguments[1].equals(Protocol.IN_USE)){
@@ -75,7 +75,7 @@ public class Upload extends Command{
 					
 					System.out.println("File sent");
 					
-					_bufferTCP = _user.receiveFromServer(Protocol.UP_USER_RESPONSE_ARGS);
+					_bufferTCP = _user.receiveFromServer(Protocol.UP_USER_RESPONSE_ARGS, false);
 					_arguments = _bufferTCP.getStrParams();
 					System.out.println(_user.isConnected());
 					System.out.println(_arguments[0]);

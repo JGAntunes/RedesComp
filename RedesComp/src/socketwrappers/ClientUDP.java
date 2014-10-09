@@ -41,6 +41,7 @@ public class ClientUDP {
 	 */
 	public ClientUDP() throws SocketException{
 		_socket = new DatagramSocket();
+		_socket.setSoTimeout(4000);
 		_host = "localhost";
 		_port = _socket.getPort();
 		_inputBuffer = new byte[5120];

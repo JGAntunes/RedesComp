@@ -5,9 +5,11 @@ package socketwrappers;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -23,6 +25,7 @@ import utils.StreamProcessors;
 public class ClientTCP {
 	private Socket _socket;
 	private DataOutputStream _output;
+	private BufferedInputStream _input;
 	private String _host;
 	private int _port;
 	
@@ -30,14 +33,15 @@ public class ClientTCP {
 		_host = host;
 		_port = port;
 		_socket = new Socket(host, port);
-		_socket.setKeepAlive(true);
-		_socket.setSoTimeout(0);
 		if(_socket.isConnected()){
-			System.out.println("Successfully connected to: " + _host + ": " + _port);
+			System.out.println("Successfully connected to: " + _host + " " + _port);
 		}
 		else{
 			System.out.println("Failded to connect to server.");
 		}
+		_socket.setSoTimeout(4000);
+		_output = new DataOutputStream(_socket.getOutputStream());
+		_input = new BufferedInputStream(_socket.getInputStream());
 	}
 	
 	public int getPort() {
@@ -80,13 +84,15 @@ public class ClientTCP {
 	}
 	
 	public void sendToServer(String message) throws IOException{
-		_output = new DataOutputStream(_socket.getOutputStream());
-		_output.writeBytes(message + '\n');
+		System.out.println("I'm about to being sent!#" + message + "#");
+		PrintWriter out = new PrintWriter(_output, true);
+		out.println(message + '\n');
 	}
 	
 	public void sendToServer(byte[] message) throws IOException{
-		_output = new DataOutputStream(_socket.getOutputStream());	
+		System.out.println("I'm about to being sent! " + message);
 		_output.write(message, 0, message.length);
+		_output.flush();
 	}
 	
 /*	public void sendToServer(MessageTCP message) throws IOException{
@@ -104,7 +110,7 @@ public class ClientTCP {
 		_output.flush();
 	}*/
 	
-	public MessageTCP receiveFromServer(int expectedArgs) throws IOException{
-		return new MessageTCP(StreamProcessors.getByteArray(new BufferedInputStream(_socket.getInputStream())), expectedArgs);
+	public MessageTCP receiveFromServer(int expectedArgs, boolean data) throws IOException{
+		return StreamProcessors.getTCPInput(_input, expectedArgs, data);
 	}
 }

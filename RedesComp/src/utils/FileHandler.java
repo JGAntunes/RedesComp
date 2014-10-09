@@ -5,6 +5,7 @@ package utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -61,7 +62,7 @@ public class FileHandler {
 			System.out.println("File exists.");
 			FileInputStream fin = new FileInputStream(filePath);
 
-			byte[] result = StreamProcessors.getByteArray(new BufferedInputStream(fin));
+			byte[] result = StreamProcessors.readFile(new BufferedInputStream(fin), (int) f.length());
 
 			fin.close();
 			

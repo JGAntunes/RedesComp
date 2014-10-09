@@ -15,7 +15,7 @@ public class MessageTCP {
 	private String[] _strParams;
 	private byte[] _data;
 	
-	MessageTCP(byte[] data, int args) throws UnsupportedEncodingException{
+	public MessageTCP(byte[] data, int args) throws UnsupportedEncodingException{
 		int i = 0, offset = 0, total = 0;
 		int argsRead = 0;
 		byte[] argsBuffer = null;
@@ -56,7 +56,7 @@ public class MessageTCP {
 		_data =dataBuffer;
 	}
 	
-	MessageTCP(String[] args, byte[] data) throws UnsupportedEncodingException{
+	public MessageTCP(String[] args, byte[] data) throws UnsupportedEncodingException{
 		_strParams = args;
 		_data = data;
 	}

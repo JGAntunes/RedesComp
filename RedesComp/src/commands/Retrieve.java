@@ -58,7 +58,7 @@ public class Retrieve extends Command{
 			_fileName = _arguments[0];
 			_user.sendToServer(Protocol.DOWN_FILE + " " + _fileName);
 			System.out.println(">> Sent retrieve");
-			_bufferTCP = _user.receiveFromServer(Protocol.DOWN_RESPONSE_ARGS);
+			_bufferTCP = _user.receiveFromServer(Protocol.DOWN_RESPONSE_ARGS, true);
 			_arguments = _bufferTCP.getStrParams();
 			if(_arguments[0].equals(Protocol.DOWN_RESPONSE)){
 				if(_arguments.length == 3){
