@@ -33,7 +33,8 @@ public class ServerTCP{
 	 */
 	public ServerTCP(int port) throws IOException{
 		_port = port;
-		_serverSocket = new ServerSocket(getPort());
+		_serverSocket = new ServerSocket(_port);
+		System.out.println("Running on TCP: " + _port);
 		_input = null;
 		_clientSocket = null;
 		_output = null;

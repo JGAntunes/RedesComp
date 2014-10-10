@@ -52,8 +52,6 @@ public class List extends Command{
 			_arguments = _bufferUDP.getMessage().split(" ");
 			if(_arguments[0].equals(Protocol.LIST_RESPONSE)){
 				if(_arguments.length > 4){
-					System.out.println(_arguments[1]);
-					System.out.println(Integer.parseInt(_arguments[2]));
 					User.setSS(_arguments[1], Integer.parseInt(_arguments[2]));
 					int numFiles = Integer.parseInt(_arguments[3]);
 					System.out.println("Available files for download:");

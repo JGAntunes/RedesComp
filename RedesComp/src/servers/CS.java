@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import commands.Command;
 import commands.cs.Retrieve;
@@ -41,14 +42,59 @@ public class CS {
 		 * We get the UDP server running by creating one, we pass as an argument the port of the machine were UDP server will run.
 		 */
 		@Override
-		public void run() {
+		public void run() {		
 			try {
 				_listSocket = new ServerUDP(_port);
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
+				Random rand = new Random();
+				while(true){
+					MessageUDP message;
+					try {
+						message = _listSocket.receiveMessage();
+						System.out.println(message.getMessage() + "#");
+						if(message.getMessage().equals(Protocol.LIST + '\n')){
+							String response = new String();
+							String[] files = readFromFile("SS_List");
+							if(files.length == 0){
+								_listSocket.sendMessage(new MessageUDP(message.getIPAddress().getHostAddress(), message.getPort(), Protocol.EOF + "\n"));
+							}
+							else{
+								String[] servers = readFromFile("CS_List");
+								if(servers.length == 0){
+									_listSocket.sendMessage(new MessageUDP(message.getIPAddress().getHostAddress(), message.getPort(), Protocol.ERROR + "\n"));
+								}
+								else{
+								    int randomNum = rand.nextInt(servers.length);
+								    String server = servers[randomNum];
+								    response = Protocol.LIST_RESPONSE + " " + server + " " + files.length + " ";
+								    int i = 0;
+								    for(String f : files){
+								    	response = response.concat(f);
+								    	i++;
+								    	if(files.length != i){
+								    		response = response.concat(" ");
+								    	}
+								    }
+									_listSocket.sendMessage(new MessageUDP(message.getIPAddress().getHostAddress(), message.getPort(), response + "\n"));
+								}
+							}
+						}
+						else{
+							_listSocket.sendMessage(new MessageUDP(message.getIPAddress().getHostAddress(), message.getPort(), Protocol.ERROR + "\n"));
+						}
+					} catch (SocketException e) {
+						System.err.println(Errors.SOCKET_PROBLEM);
+						System.exit(-1);
+					} catch (IOException e) {
+						e.printStackTrace();
+						System.err.println(Errors.IO_PROBLEM);
+						System.exit(-1);
+					}
+				}
+			} catch(Exception e){
 				e.printStackTrace();
+				System.err.println(Errors.UNKNOWN_ERROR);
+				System.exit(-1);
 			}
-			
 		}
 	}
 	
@@ -126,7 +172,7 @@ public class CS {
 				co.run();
 			}
 			else if(string.equals(Protocol.UP_CS_FILE)){
-				co = new Upload(_clientSocket, _serverSocket, 2, true);
+				co = new Upload(_serverSocket, _clientSocket, 2, true);
 				co.run();
 			}
 			else{
@@ -157,14 +203,18 @@ public class CS {
 		if(lines.size() == 0){
 			throw new NullPointerException("[EmptyFile]");
 		}
-		return (String[]) lines.toArray();
+		return (String[]) lines.toArray(new String[lines.size()]);
 	}
 	
 	public static void main(String[] args){
 		try {
 			_port = initParser(args);
-			(new UploadServer()).run();
-			(new ListServer()).run();
+			Thread list = new Thread(new ListServer());
+			Thread upload = new Thread(new UploadServer());
+			list.start();
+			upload.start();
+			list.join();
+			upload.join();
 		} catch (NumberFormatException e) {
 			System.err.println(Errors.INVALID_INITIALIZERS);
 			System.exit(-1);

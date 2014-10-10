@@ -66,18 +66,18 @@ public class SS {
 	 */
 	private static void protocolParser(String string){
 		try {
-			Command co;
+			Thread co;
 			if(string.isEmpty()){
 				System.err.println(Errors.INVALID_PROTOCOL);
 				_server.send(Protocol.ERROR);
 			}
 			else if(string.equals(Protocol.DOWN_FILE)){
-				co = new Retrieve(_server);
-				co.run();
+				co = new Thread( new Retrieve(_server));
+				co.start();
 			}
 			else if(string.equals(Protocol.UP_CS_FILE)){
-				co = new Upload(_server, 2, true);
-				co.run();
+				co = new Thread( new Upload(_server, 2, true));
+				co.start();
 			}
 			else{
 				System.err.println(Errors.INVALID_PROTOCOL);

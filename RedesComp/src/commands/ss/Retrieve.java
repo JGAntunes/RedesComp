@@ -12,6 +12,7 @@ import socketwrappers.ClientTCP;
 import socketwrappers.MessageTCP;
 import socketwrappers.ServerTCP;
 import utils.FileHandler;
+import utils.LocalPaths;
 import utils.Protocol;
 import utils.StreamProcessors;
 
@@ -44,7 +45,7 @@ public class Retrieve  extends Command{
 					System.out.println(echoToScreen);
 					String responseCommand = Protocol.DOWN_RESPONSE;
 					try {
-						byte[] file = FileHandler.upFile(System.getProperty("user.dir") + "/storagefiles/" + fileName); //check for missing file
+						byte[] file = FileHandler.upFile(LocalPaths.STORED + fileName); //check for missing file
 						byte[] init = (responseCommand + "ok " + (file.length-1) + " ").getBytes();
 						_server.send(StreamProcessors.concatByte(init, init.length, file, file.length));
 					} catch (FileNotFoundException e) {

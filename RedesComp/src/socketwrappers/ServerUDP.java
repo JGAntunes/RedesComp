@@ -18,10 +18,11 @@ public class ServerUDP{
 	 * port.
 	 */
 	public ServerUDP(int port) throws SocketException{
-		_inputBuffer = new byte[5120];
+		_inputBuffer = new byte[4];
 		_outputBuffer = new byte[5120];
 		_port = port;
 		_socket = new DatagramSocket(_port);
+		System.out.println("Running UDP on: " + _port);
 	}
 	
 	/**
@@ -75,7 +76,7 @@ public class ServerUDP{
 	public MessageUDP receiveMessage() throws IOException{
 		DatagramPacket receivePacket = new DatagramPacket(_inputBuffer, _inputBuffer.length);
 		_socket.receive(receivePacket);
-		MessageUDP message = new MessageUDP(_socket.getInetAddress(), receivePacket.getPort(), new String( receivePacket.getData()));
+		MessageUDP message = new MessageUDP(receivePacket.getAddress(), receivePacket.getPort(), new String( receivePacket.getData()));
 		return message;
 	}
 	

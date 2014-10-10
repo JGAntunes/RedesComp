@@ -113,7 +113,7 @@ public class ClientUDP {
 	public MessageUDP receiveFromServer() throws IOException{
 		DatagramPacket receivePacket = new DatagramPacket(_inputBuffer, _inputBuffer.length);
 		_socket.receive(receivePacket);
-		MessageUDP message = new MessageUDP(_socket.getInetAddress(), receivePacket.getPort(), new String( receivePacket.getData()));
+		MessageUDP message = new MessageUDP(receivePacket.getAddress(), receivePacket.getPort(), new String( receivePacket.getData()));
 		return message;
 	}
 	
