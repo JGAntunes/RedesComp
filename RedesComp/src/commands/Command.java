@@ -7,7 +7,7 @@ package commands;
  * @author Grupo 3
  *
  */
-public abstract class Command {
+public abstract class Command implements Runnable {
 
 	public String _code;
 	public String[] _arguments;

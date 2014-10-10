@@ -3,66 +3,58 @@
  */
 package servers;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.SocketException;
 
+import commands.Command;
+import commands.ss.Retrieve;
 import socketwrappers.ServerTCP;
+import utils.Errors;
+import utils.FileHandler;
 import utils.Protocol;
+import utils.StreamProcessors;
 
 /**
  * @author Grupo 3
  *
  */
 public class SS {
-	private StorageServer _server;
-	private String _name;
-	private int _port;
+	private static ServerTCP _server;
+	private static int _port;
 	private static final int DEFAULT_PORT = 59000;
 	
 	/**
 	 * Storage server constructor, receives as arguments the name of the machine and the port were the server will run.
 	 */
-	public SS(String name, int port) throws IOException, SocketException{
-		_name = name;
-		_port = port;
-	}
+	private SS(){}
 	
-	/**
-	 * We get the TCP server running by creating one, we pass as an argument the port of the machine were TCP server will run. After creating one we 
-	 * just have to await a connection.
-	 */
-	private class StorageServer implements Runnable{
-		
-		private ServerTCP _server;
-			
-		@Override
-		public void run() {
-			try {
-				_server = new ServerTCP(_port);
-				_server.waitConnection();
-				//while(cenas);
-				//do coisas;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
 	
 	/**
 	 * This is the parser we use to call out the SS if the command used is valid.
 	 */
-	private static int initParser(String[] string) throws NumberFormatException, IOException{
+	private static int initParser(String[] string){
 		if(string.length == 0){
 			return DEFAULT_PORT;
 		}
 		else if(string.length == 2){
 			if(string[0].equals("-p")){
-				return Integer.parseInt(string[1]);
+				try{
+					return Integer.parseInt(string[1]);
+				} catch(NumberFormatException e){
+					System.err.println(Errors.INVALID_PORT_NUMBER);
+					System.exit(-1);
+				}
 			}
 		}
 		else{
-			throw new IOException("[SS]Invalid init input: " + string);
+			System.err.println(Errors.INVALID_INITIALIZERS);
+			System.exit(-1);
 		}
 		return 0;
 	}
@@ -70,19 +62,68 @@ public class SS {
 	/**
 	 * The parser that we use to call out a command, if it is a valid one.
 	 */
-	private static void protocolParser(String string) throws IOException{
-		String[] tokens = string.split(" ");
-		if(tokens.length == 0){
-			throw new IOException("[SS]Invalid protocol usage, empty command received");
+	private static void protocolParser(String string){
+		try {
+			Command co;
+			String[] tokens = string.split(" ");
+			if(tokens.length == 0){
+				System.err.println(Errors.INVALID_PROTOCOL);
+				_server.send(Protocol.ERROR);
+			}
+			else if(tokens[0].equals(Protocol.DOWN_FILE)){
+				co = new Retrieve(_server);
+				co.run();
+			}
+			else if(tokens[0].equals(Protocol.UP_CS_FILE)){
+				co = new Retrieve(_server);
+				co.run();
+			}
+			else{
+				System.err.println(Errors.INVALID_PROTOCOL);
+				_server.send(Protocol.ERROR);
+				
+			}		
+		} catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		else if(tokens[0].equals(Protocol.DOWN_FILE)){
-			//send file to user
+	}
+	
+	public static void main(String[] args){
+		_port = initParser(args);
+		try {
+			_server = new ServerTCP(_port);
+			
+		} catch (SocketException e) {
+			System.err.println(Errors.SOCKET_PROBLEM);
+			System.exit(-1);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		else if(tokens[0].equals(Protocol.UP_CS_FILE)){
-			//receive file from cs
-		}
-		else{
-			throw new IOException("[SS]Invalid protocol usage: " + string);
+		while(true){
+			try {
+				_server.waitConnection();
+			} catch (IOException e) {
+				System.err.println(Errors.WAITING_PROBLEM);
+				System.exit(-1);
+			}
+			try {
+				protocolParser(_server.receive());
+			} catch (NullPointerException e) {
+				System.err.println(Errors.NO_CLIENT_SOCKET);
+				System.exit(-1);
+			} catch (SocketException e) {
+				System.err.println(Errors.SOCKET_PROBLEM);
+				System.exit(-1);
+			} catch (IOException e) {
+				System.err.println(Errors.IO_PROBLEM);
+				System.exit(-1);
+			}
 		}
 	}
 }

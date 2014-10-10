@@ -99,7 +99,6 @@ public class StreamProcessors {
 		byte[] resultBuff = new byte[initLen + endLen];
 		System.arraycopy(init, 0, resultBuff, 0, initLen);
 		System.arraycopy(end, 0, resultBuff, initLen, endLen);
-		System.out.println("Just concated: " + new String(resultBuff, "UTF-8"));
 		return resultBuff;
 	}
 }

@@ -89,7 +89,6 @@ public class ClientTCP {
 	}
 	
 	public void sendToServer(byte[] message) throws IOException{
-		System.out.println(new String(message, "UTF-8"));
 		_output.write(message, 0, message.length);
 	}
 	

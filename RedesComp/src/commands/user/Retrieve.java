@@ -1,11 +1,13 @@
 /**
  * 
  */
-package commands;
+package commands.user;
 
 import java.io.IOException;
 import java.lang.IllegalArgumentException;
 import java.nio.file.FileAlreadyExistsException;
+
+import commands.Command;
 
 import socketwrappers.ClientTCP;
 import socketwrappers.MessageTCP;
@@ -105,13 +107,13 @@ public class Retrieve extends Command{
 			System.exit(-1);
 		} catch (IOException e){
 			e.printStackTrace();
-			System.err.println(Errors.IO_INPUT);
+			System.err.println(Errors.IO_PROBLEM);
 			System.exit(-1);
 		} finally{
 			try {
 				_user.close();
 			} catch (IOException e) {
-				System.err.println(Errors.IO_INPUT);
+				System.err.println(Errors.IO_PROBLEM);
 				System.exit(-1);
 			}
 		}

@@ -1,9 +1,11 @@
 /**
  * 
  */
-package commands;
+package commands.user;
 
 import java.io.IOException;
+
+import commands.Command;
 
 import socketwrappers.ClientUDP;
 import socketwrappers.MessageUDP;
@@ -72,13 +74,13 @@ public class List extends Command{
 			}
 		} catch (IOException e){
 			e.printStackTrace();
-			System.err.println(Errors.IO_INPUT);
+			System.err.println(Errors.IO_PROBLEM);
 			System.exit(-1);
 		} finally{
 			try {
 				_user.close();
 			} catch (IOException e) {
-				System.err.println(Errors.IO_INPUT);
+				System.err.println(Errors.IO_PROBLEM);
 				System.exit(-1);
 			}
 		}

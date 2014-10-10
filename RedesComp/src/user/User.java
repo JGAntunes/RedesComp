@@ -10,9 +10,9 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import commands.Command;
-import commands.List;
-import commands.Retrieve;
-import commands.Upload;
+import commands.user.List;
+import commands.user.Retrieve;
+import commands.user.Upload;
 import servers.CS;
 import socketwrappers.ClientTCP;
 import socketwrappers.ClientUDP;
@@ -49,7 +49,7 @@ public class User {
 			System.err.println(Errors.SOCKET_PROBLEM);
 			System.exit(-1);
 		}catch (IOException e) {
-			System.err.println(Errors.IO_INPUT);
+			System.err.println(Errors.IO_PROBLEM);
 			System.exit(-1);
 		}
 	}

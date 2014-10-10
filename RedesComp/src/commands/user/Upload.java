@@ -1,12 +1,14 @@
 /**
  * 
  */
-package commands;
+package commands.user;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+
+import commands.Command;
 
 import socketwrappers.ClientTCP;
 import socketwrappers.MessageTCP;
@@ -71,7 +73,6 @@ public class Upload extends Command{
 					byte[] output = FileHandler.upFile(_fileName);
 					byte[] command = new String(Protocol.UP_USER_FILE + " " + (output.length-1) + " ").getBytes();
 					byte[] resultOut = StreamProcessors.concatByte(command, command.length, output, output.length);
-					System.out.println(new String(output, "UTF-8"));
 					_user.sendToServer(resultOut);
 					
 					System.out.println("File sent");
@@ -107,13 +108,13 @@ public class Upload extends Command{
 			System.exit(-1);
 		} catch (IOException e){
 			e.printStackTrace();
-			System.err.println(Errors.IO_INPUT);
+			System.err.println(Errors.IO_PROBLEM);
 			System.exit(-1);
 		} finally{
 			try {
 				_user.close();
 			} catch (IOException e) {
-				System.err.println(Errors.IO_INPUT);
+				System.err.println(Errors.IO_PROBLEM);
 				System.exit(-1);
 			}
 		}

@@ -5,7 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.*;
+import java.util.Scanner;
 
 import utils.StreamProcessors;
 
@@ -19,9 +21,8 @@ import utils.StreamProcessors;
  */
 public class ServerTCP{
 
-	private BufferedReader _inputString;
-	private BufferedInputStream _inputByte;
 	private DataOutputStream _output;
+	private BufferedInputStream _input;
 	private Socket _clientSocket;
 	private ServerSocket _serverSocket;
 	private int _port;
@@ -33,6 +34,17 @@ public class ServerTCP{
 	public ServerTCP(int port) throws IOException{
 		_port = port;
 		_serverSocket = new ServerSocket(getPort());
+		_input = null;
+		_clientSocket = null;
+		_output = null;
+	}
+	
+	public void closeClient() throws IOException{
+		_clientSocket.close();
+	}
+	
+	public void close() throws IOException{
+		_serverSocket.close();
 	}
 	
 	/**
@@ -75,7 +87,8 @@ public class ServerTCP{
 	/**
 	 * We set a new socket to the clientSocket.
 	 */
-	public void setClientSocket(Socket clientSocket) {
+	public void setClientSocket(Socket clientSocket) throws IOException {
+		_clientSocket.close();
 		_clientSocket = clientSocket;
 	}
 	
@@ -85,40 +98,34 @@ public class ServerTCP{
 	 */
 	public void reconnect() throws IOException{
 		_serverSocket.close();
-		_serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost(), _port));
+		_serverSocket = new  ServerSocket(_port);
 	}
 	
 	/**
-	 * This fucntion listens for a connection to be made to the serverSocket and if one is made it accepts it.
+	 * This function listens for a connection to be made to the serverSocket and if one is made it accepts it.
 	 */
 	public void waitConnection() throws IOException{
 		_clientSocket = _serverSocket.accept();
-	}
-	
-	/**
-	 * We get an output stream to the socket, then we write the message that is passed as an argument to the function, then 
-	 * close the stream when everything has been written.
-	 */
-	public void sendMessage(String message) throws IOException{
 		_output = new DataOutputStream(_clientSocket.getOutputStream());
-		_output.writeBytes(message);
-		_output.close();
+		_input = new BufferedInputStream(_clientSocket.getInputStream());
 	}
 	
-	/**
-	 * First we get an input stream for the socket from where we want to retrieve the message, we read the line of text and
-	 * close the stream when finished, returning the message in the end.
-	 */
-	public String receiveStringMessage() throws IOException{
-		_inputString = new BufferedReader(new InputStreamReader(_clientSocket.getInputStream()));
-		String out = _inputString.readLine();
-		_inputString.close();
-		return out;
+	public void send(String message) throws IOException, NullPointerException{
+		PrintWriter out = new PrintWriter(_output, true);
+		out.println(message);
 	}
 	
+	public void send(byte[] message) throws IOException, NullPointerException{
+		_output.write(message, 0, message.length);
+	}
 	
-/*	public MessageTCP receiveByteMessage(int expectedArgs) throws IOException{
-		return new MessageTCP(StreamProcessors.getByteArray(_clientSocket.getInputStream()), expectedArgs);
-	}*/
+	public MessageTCP receive(int expectedArgs, boolean data) throws IOException, NullPointerException{
+		return StreamProcessors.getTCPInput(_input, expectedArgs, data);
+	}
+
+	public String receive() throws IOException, NullPointerException{
+		Scanner sc = new Scanner(_input);
+		return sc.nextLine();
+	}
 
 }
