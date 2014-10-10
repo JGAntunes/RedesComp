@@ -35,4 +35,10 @@ public class Errors {
 	public final static String FILE_PATH = new String(">> Problems saving file in the given path.");
 	
 	public final static String SAVING_FILE = new String(">> Could not save file.");
+	
+	public final static String FILE_EXISTS = new String(">> File already exists.");
+
+	public final static String INEXISTING_FILE = new String(">> File doesn't exist.");
+	
+	public final static String UNKNOWN_ERROR = new String(">> An unknown error ocurred, please contact the developers.");
 }

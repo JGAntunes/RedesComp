@@ -23,7 +23,6 @@ public class MessageTCP {
 		
 		System.out.println(args);
 		System.out.println(data.length);
-		System.out.println(new String(data, "UTF-8"));
 		
 		ArrayList<byte[]> processor = new ArrayList<byte[]>();
 		for(byte b : data){

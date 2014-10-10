@@ -15,4 +15,6 @@ public class LocalPaths {
 	public final static String RESOURCES = new String("resources/");
 	
 	public final static String DOWNLOADS = RESOURCES + "user_files/";
+	
+	public final static String STORED = new String("ss_files/");
 }

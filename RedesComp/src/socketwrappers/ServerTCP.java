@@ -122,6 +122,12 @@ public class ServerTCP{
 	public MessageTCP receive(int expectedArgs, boolean data) throws IOException, NullPointerException{
 		return StreamProcessors.getTCPInput(_input, expectedArgs, data);
 	}
+	
+	public String preReceive(int size) throws IOException{
+		byte[] buff = new byte[size];
+		while ((_input.read(buff, 0, buff.length)) > -1);
+		return new String(buff, "UTF-8");
+	}
 
 	public String receive() throws IOException, NullPointerException{
 		Scanner sc = new Scanner(_input);
