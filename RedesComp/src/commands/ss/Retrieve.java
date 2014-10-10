@@ -23,9 +23,14 @@ import utils.StreamProcessors;
 public class Retrieve  extends Command{
 	
 	private ServerTCP _server;
+	private String[] _input;
 	
 	public Retrieve (ServerTCP server){
 		_server = server;
+	}
+	
+	public Retrieve (MessageTCP message){
+		_input = message.getStrParams();
 	}
 	
 	@Override
@@ -35,8 +40,7 @@ public class Retrieve  extends Command{
 			try {
 				input = _server.receive().split(" ");
 			} catch (NullPointerException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				input = _input;
 			}
 			if(input.length<2){
 				if(input[0].equals(Protocol.DOWN_FILE)){

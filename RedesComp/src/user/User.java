@@ -34,8 +34,7 @@ public class User {
 
 	public static void main(String[] args){
 		initParser(args);
-		System.out.println(_CSName);
-		System.out.println(_CSPort);
+		System.out.println("Started");
 		try {
 			_input = new BufferedReader(new InputStreamReader(System.in));
 			while(emitter(_input.readLine())){}

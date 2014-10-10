@@ -70,7 +70,8 @@ public class ClientTCP {
 		return _socket.isConnected();
 	}
 
-	public void setServerSocket(Socket socket) {
+	public void setServerSocket(Socket socket) throws IOException {
+		_socket.close();
 		_socket = socket;
 	}
 	

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import commands.Command;
-import commands.cs.Retrieve;
 import commands.cs.Upload;
 import socketwrappers.*;
 import utils.Errors;
@@ -50,8 +49,9 @@ public class CS {
 					MessageUDP message;
 					try {
 						message = _listSocket.receiveMessage();
-						System.out.println(message.getMessage() + "#");
 						if(message.getMessage().equals(Protocol.LIST + '\n')){
+							String echoToScreen = Protocol.LIST + " " + message.getIPAddress().getHostAddress() + " " + message.getPort();
+							System.out.println(echoToScreen);
 							String response = new String();
 							String[] files = readFromFile("SS_List");
 							if(files.length == 0){
@@ -85,13 +85,12 @@ public class CS {
 						System.err.println(Errors.SOCKET_PROBLEM);
 						System.exit(-1);
 					} catch (IOException e) {
-						e.printStackTrace();
+
 						System.err.println(Errors.IO_PROBLEM);
 						System.exit(-1);
 					}
 				}
 			} catch(Exception e){
-				e.printStackTrace();
 				System.err.println(Errors.UNKNOWN_ERROR);
 				System.exit(-1);
 			}
@@ -118,7 +117,8 @@ public class CS {
 						System.exit(-1);
 					}
 					try {
-						protocolParser(_serverSocket.preReceive(3));
+						Thread co = new Thread(new Upload(_serverSocket, _clientSocket));
+						co.start();
 					} catch (NullPointerException e) {
 						System.err.println(Errors.NO_CLIENT_SOCKET);
 						System.exit(-1);
@@ -160,39 +160,14 @@ public class CS {
 	/**
 	 * The parser that we use to call out a command, if it is a valid one.
 	 */
-	private static void protocolParser(String string){
-		try {
-			Command co;
-			if(string.isEmpty()){
-				System.err.println(Errors.INVALID_PROTOCOL);
-				_serverSocket.send(Protocol.ERROR);
-			}
-			else if(string.equals(Protocol.DOWN_FILE)){
-				co = new Retrieve(_serverSocket);
-				co.run();
-			}
-			else if(string.equals(Protocol.UP_CS_FILE)){
-				co = new Upload(_serverSocket, _clientSocket, 2, true);
-				co.run();
-			}
-			else{
-				System.err.println(Errors.INVALID_PROTOCOL);
-				_serverSocket.send(Protocol.ERROR);
-				
-			}
-		} catch (NullPointerException e) {
-			System.err.println(Errors.NO_CLIENT_SOCKET);
-			System.exit(-1);
-		} catch (IOException e) {
-			System.err.println(Errors.IO_PROBLEM);
-			System.exit(-1);
-		}
+	private static void protocolParser(String[] string){
+
 	}
 	
 	/**
 	 * We use this function to read lines from a file and save them to an array.
 	 */
-	private static String[] readFromFile(String path) throws IOException, FileNotFoundException, NullPointerException{
+	public static String[] readFromFile(String path) throws IOException, FileNotFoundException, NullPointerException{
 		BufferedReader reader = new BufferedReader(new FileReader(path));
 		ArrayList <String> lines = new ArrayList<String>();
 		String line;

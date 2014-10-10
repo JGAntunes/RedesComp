@@ -41,11 +41,6 @@ public class FileHandler {
 	 */
 	
 	public static void createFile(String filePath, int size , byte[] data) throws IOException{
-		System.out.println(data.length);
-		System.out.println(size);
-		/*if(size != data.length){
-			throw new IllegalArgumentException();
-		}*/
 		try{
 			Files.createFile(Paths.get(filePath));
 		}

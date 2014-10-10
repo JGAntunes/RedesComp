@@ -30,25 +30,19 @@ public class StreamProcessors {
 		Scanner sc = new Scanner(new ByteArrayInputStream(inputBuff));
 		String[] args = new String[argNum];
 		
-		args[0] = sc.next(); // tratar exepções
-		
-		//args[0] = sc.next();
+		args[0] = sc.next();
 
-		System.out.println(args[0]);
 		if(argNum == 2){
-			args[1] = sc.next(); // tratar exepções
-			System.out.println(args[1]);
+			args[1] = sc.next();
 		}
 		
 		if(argNum == 3){
-			args[1] = sc.next(); // tratar exepções
+			args[1] = sc.next();
 		}
 		
 		if(size){
 			int fileSize = 0;
 			int offset = 0;
-			
-			System.out.println("Checking size");
 			
 			args[args.length-1] = sc.next(Pattern.compile("([0-9]+)"));
 			for(String s: args){
@@ -58,17 +52,13 @@ public class StreamProcessors {
 			resultBuff = new byte[inputBuff.length - offset];
 			System.arraycopy(inputBuff, offset, resultBuff, 0, resultBuff.length);
 			
-			if((char) resultBuff[resultBuff.length - 1] == '\n'){
-				System.out.println("Isto é um \n que foi lido.");
-				//message not ending with \n
+			if((char) resultBuff[resultBuff.length - 1] != '\n'){
+				System.err.println(Errors.INVALID_PROTOCOL);
+				System.exit(-1);
 			}
 			
 			fileSize = Integer.parseInt(args[args.length-1]);
-			
-			/*if((char) resultBuff[resultBuff.length - 1] == '\n'){
-				System.out.println("Isto é um \n que foi lido.");
-				//message not ending with \n
-			}*/
+
 		}
 		return new MessageTCP(args, resultBuff);
 	}
