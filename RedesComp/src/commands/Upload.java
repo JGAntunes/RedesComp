@@ -53,13 +53,14 @@ public class Upload extends Command{
 			if(!file.exists()){
 				throw new FileNotFoundException();
 			}
-			_user.sendToServer( new String(Protocol.CHECK_FILE + " " + file.getName()).getBytes());
+			_user.sendToServer(new String(Protocol.CHECK_FILE + " " + file.getName()));
 			
 			System.out.println(file.getName());
 			
 			System.out.println(">> Sent upload");
-			_bufferTCP = _user.receiveFromServer(Protocol.CHECK_FILE_RESPONSE_ARGS, false);
-			_arguments = _bufferTCP.getStrParams();
+			
+			//_bufferTCP = _user.receiveFromServer(Protocol.CHECK_FILE_RESPONSE_ARGS, false);
+			_arguments = _user.receiveFromServer().split(" ");
 			if(_arguments[0].equals(Protocol.CHECK_FILE_RESPONSE)){
 				if(_arguments[1].equals(Protocol.IN_USE)){
 					System.out.println("File name already in use, please try another one.");

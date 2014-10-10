@@ -75,8 +75,9 @@ public class StreamProcessors {
 	
 	public static byte[] readFile(BufferedInputStream input) throws IOException{
 		
+		
 		int byteNum = -1;
-		int initBuff = 1024;
+		int initBuff = 10;
 		int byteTotal = 0;
 		byte[] buff;
 		//byte[] resultBuff = new byte[0];
@@ -86,6 +87,7 @@ public class StreamProcessors {
 		buff = new byte[initBuff];
 		
 		byte[] resultBuff = new byte[0];
+		
 		while ((byteNum = input.read(buff, 0, buff.length)) > -1) {
 			byte[] tbuff = new byte[resultBuff.length + byteNum];
 			System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length);

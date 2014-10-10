@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 import utils.FileHandler;
 import utils.Protocol;
@@ -39,7 +40,7 @@ public class ClientTCP {
 		else{
 			System.out.println("Failded to connect to server.");
 		}
-		_socket.setKeepAlive(true);
+		//_socket.setKeepAlive(true);
 		//_socket.setSoTimeout(120000);
 		_output = new DataOutputStream(_socket.getOutputStream());
 		_input = new BufferedInputStream(_socket.getInputStream());
@@ -112,5 +113,10 @@ public class ClientTCP {
 	
 	public MessageTCP receiveFromServer(int expectedArgs, boolean data) throws IOException{
 		return StreamProcessors.getTCPInput(_input, expectedArgs, data);
+	}
+
+	public String receiveFromServer() throws IOException{
+		Scanner sc = new Scanner(_input);
+		return sc.nextLine();
 	}
 }
