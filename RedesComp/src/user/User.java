@@ -20,7 +20,7 @@ import socketwrappers.MessageUDP;
 import utils.*;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class User {

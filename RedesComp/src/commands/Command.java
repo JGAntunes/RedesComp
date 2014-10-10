@@ -4,7 +4,7 @@
 package commands;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public abstract class Command {

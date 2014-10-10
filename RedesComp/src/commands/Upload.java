@@ -17,7 +17,7 @@ import utils.Protocol;
 import utils.StreamProcessors;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class Upload extends Command{
@@ -53,7 +53,7 @@ public class Upload extends Command{
 			if(!file.exists()){
 				throw new FileNotFoundException();
 			}
-			_user.sendToServer(new String(Protocol.CHECK_FILE + " " + file.getName()));
+			_user.sendToServer(new String(Protocol.CHECK_FILE + " " + file.getName() + '\n').getBytes());
 			
 			System.out.println(file.getName());
 			
@@ -71,6 +71,7 @@ public class Upload extends Command{
 					byte[] output = FileHandler.upFile(_fileName);
 					byte[] command = new String(Protocol.UP_USER_FILE + " " + (output.length-1) + " ").getBytes();
 					byte[] resultOut = StreamProcessors.concatByte(command, command.length, output, output.length);
+					System.out.println(new String(output, "UTF-8"));
 					_user.sendToServer(resultOut);
 					
 					System.out.println("File sent");

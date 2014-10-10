@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import socketwrappers.MessageTCP;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class StreamProcessors {
@@ -77,14 +77,7 @@ public class StreamProcessors {
 		
 		
 		int byteNum = -1;
-		int initBuff = 10;
-		int byteTotal = 0;
-		byte[] buff;
-		//byte[] resultBuff = new byte[0];
-		/*if(fileSize+1 < initBuff){
-			initBuff = fileSize;
-		}*/
-		buff = new byte[initBuff];
+		byte[] buff = new byte[1024*1024];
 		
 		byte[] resultBuff = new byte[0];
 		
@@ -94,7 +87,7 @@ public class StreamProcessors {
 			System.arraycopy(buff, 0, tbuff, resultBuff.length, byteNum);
 			resultBuff = tbuff;
 		}
-		System.out.println("Total: " + byteTotal);
+		System.out.println("Total: " + resultBuff.length);
 		return resultBuff;
 	}
 	
@@ -106,7 +99,7 @@ public class StreamProcessors {
 		byte[] resultBuff = new byte[initLen + endLen];
 		System.arraycopy(init, 0, resultBuff, 0, initLen);
 		System.arraycopy(end, 0, resultBuff, initLen, endLen);
-		//System.out.println("Just concated: " + new String(resultBuff, "UTF-8"));
+		System.out.println("Just concated: " + new String(resultBuff, "UTF-8"));
 		return resultBuff;
 	}
 }

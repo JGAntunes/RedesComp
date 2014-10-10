@@ -4,7 +4,7 @@
 package utils;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 /**

@@ -20,7 +20,7 @@ import utils.Protocol;
 import utils.StreamProcessors;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class ClientTCP {
@@ -40,8 +40,6 @@ public class ClientTCP {
 		else{
 			System.out.println("Failded to connect to server.");
 		}
-		//_socket.setKeepAlive(true);
-		//_socket.setSoTimeout(120000);
 		_output = new DataOutputStream(_socket.getOutputStream());
 		_input = new BufferedInputStream(_socket.getInputStream());
 	}
@@ -86,30 +84,14 @@ public class ClientTCP {
 	}
 	
 	public void sendToServer(String message) throws IOException{
-		System.out.println("I'm about to being sent!#" + message + "#");
 		PrintWriter out = new PrintWriter(_output, true);
 		out.println(message);
 	}
 	
 	public void sendToServer(byte[] message) throws IOException{
+		System.out.println(new String(message, "UTF-8"));
 		_output.write(message, 0, message.length);
-		_output.flush();
 	}
-	
-/*	public void sendToServer(MessageTCP message) throws IOException{
-		String args = new String();
-		for(String s : message.getStrParams()){
-			args.concat(s + " ");
-		}
-		if (message.getData() == null || message.getData().length < 1){
-			args.s
-		}
-		byte[] argsBytes = args.getBytes();
-		byte[] messageBytes = StreamProcessors.concatByte(message., output);
-		_output = new DataOutputStream(_socket.getOutputStream());
-		_output.write(messageBytes + '\n');
-		_output.flush();
-	}*/
 	
 	public MessageTCP receiveFromServer(int expectedArgs, boolean data) throws IOException{
 		return StreamProcessors.getTCPInput(_input, expectedArgs, data);

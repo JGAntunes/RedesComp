@@ -7,7 +7,7 @@ import java.net.UnknownHostException;
  */
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class MessageUDP {

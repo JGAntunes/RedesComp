@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class MessageTCP {

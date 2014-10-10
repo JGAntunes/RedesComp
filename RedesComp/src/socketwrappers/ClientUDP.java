@@ -13,7 +13,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class ClientUDP {
@@ -33,6 +33,7 @@ public class ClientUDP {
 		_inputBuffer = new byte[5120];
 		_outputBuffer = new byte[5120];
 		_socket = new DatagramSocket(port, InetAddress.getByName(host));
+		_socket.setSoTimeout(180000);
 	}
 	
 	/**

@@ -10,7 +10,7 @@ import socketwrappers.ServerTCP;
 import utils.Protocol;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class SS {

@@ -12,7 +12,7 @@ import utils.Errors;
 import utils.Protocol;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class List extends Command{
@@ -33,10 +33,6 @@ public class List extends Command{
 		_CSName = CSName;
 		_CSPort = CSPort;
 	}
-	
-	/* (non-Javadoc)
-	 * @see commands.Command#run()
-	 */
 	
 	/**
 	 * The use this command the client who is using an UDP protocol sends out a message to the central server with the command 

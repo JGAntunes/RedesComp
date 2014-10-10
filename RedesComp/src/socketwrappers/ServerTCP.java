@@ -14,7 +14,7 @@ import utils.StreamProcessors;
  */
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class ServerTCP{

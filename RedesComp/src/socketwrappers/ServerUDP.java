@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.net.*;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class ServerUDP{

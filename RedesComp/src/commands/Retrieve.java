@@ -15,7 +15,7 @@ import utils.LocalPaths;
 import utils.Protocol;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class Retrieve extends Command{

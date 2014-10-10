@@ -17,11 +17,11 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 

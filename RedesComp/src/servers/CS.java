@@ -14,7 +14,7 @@ import socketwrappers.*;
 import utils.Protocol;
 
 /**
- * @author Joao Antunes
+ * @author Grupo 3
  *
  */
 public class CS {
