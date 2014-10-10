@@ -10,7 +10,11 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import commands.Command;
+import commands.cs.Retrieve;
+import commands.cs.Upload;
 import socketwrappers.*;
+import utils.Errors;
 import utils.Protocol;
 
 /**
@@ -20,19 +24,18 @@ import utils.Protocol;
 public class CS {
 
 	 
-	private static ListServer _listServer;
-	private static UploadServer _uploadServer;
+	private static ServerUDP _listSocket;
+	private static ClientTCP _clientSocket;
+	private static ServerTCP _serverSocket;
 	private static String _name;
 	private static String _ip;
 	private static int _port;
 	public static final int DEFAULT_PORT = 58003;
-	private static final String RESOURCES_PATH = "./resources/FILES_LIST";
-	private static final String SERVERS_PATH = "./resources/SERVERS_LIST";
 	
 	private static class ListServer implements Runnable{
-		
-		private static ServerUDP _server;
 			
+		
+		ListServer(){}
 		
 		/**
 		 * We get the UDP server running by creating one, we pass as an argument the port of the machine were UDP server will run.
@@ -40,7 +43,7 @@ public class CS {
 		@Override
 		public void run() {
 			try {
-				_server = new ServerUDP(_port);
+				_listSocket = new ServerUDP(_port);
 			} catch (SocketException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -51,7 +54,7 @@ public class CS {
 	
 	private static class UploadServer implements Runnable{
 		
-		private static ServerTCP _server;
+		UploadServer(){}
 		
 		/**
 		 * We get the TCP server running by creating one, we pass as an argument the port of the machine were TCP server will run. After creating one we 
@@ -60,13 +63,30 @@ public class CS {
 		@Override
 		public void run() {
 			try {
-				_server = new ServerTCP(_port);
-				_server.waitConnection();
-				//while(cenas);
-				//do coisas;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				_serverSocket = new ServerTCP(_port);
+				while(true){
+					try {
+						_serverSocket.waitConnection();
+					} catch (IOException e) {
+						System.err.println(Errors.WAITING_PROBLEM);
+						System.exit(-1);
+					}
+					try {
+						protocolParser(_serverSocket.preReceive(3));
+					} catch (NullPointerException e) {
+						System.err.println(Errors.NO_CLIENT_SOCKET);
+						System.exit(-1);
+					} catch (SocketException e) {
+						System.err.println(Errors.SOCKET_PROBLEM);
+						System.exit(-1);
+					} catch (IOException e) {
+						System.err.println(Errors.IO_PROBLEM);
+						System.exit(-1);
+					}
+				}
+			} catch(Exception e){
+				System.err.println(Errors.UNKNOWN_ERROR);
+				System.exit(-1);
 			}
 		}
 	}
@@ -94,36 +114,32 @@ public class CS {
 	/**
 	 * The parser that we use to call out a command, if it is a valid one.
 	 */
-	private static void protocolParser(String string, String ip, int port) throws IOException, FileNotFoundException{
-		String[] tokens = string.split(" ");
-		String output;
-		if(tokens.length == 0){
-			throw new IOException("[CS]Invalid protocol usage, empty command received");
-		}
-		else if(tokens[0].equals(Protocol.LIST)){
-			/*try{
-				String[] files = readFromFile(RESOURCES_PATH);
-				output = new String("AWL " + _ip + " " + );
-			} catch (NullPointerException e) {
-				if(e.getMessage().startsWith("[EmptyFile]")){
-					output = 
-				}
+	private static void protocolParser(String string){
+		try {
+			Command co;
+			if(string.isEmpty()){
+				System.err.println(Errors.INVALID_PROTOCOL);
+				_serverSocket.send(Protocol.ERROR);
 			}
-			for(String file : files){
+			else if(string.equals(Protocol.DOWN_FILE)){
+				co = new Retrieve(_serverSocket);
+				co.run();
+			}
+			else if(string.equals(Protocol.UP_CS_FILE)){
+				co = new Upload(_clientSocket, _serverSocket, 2, true);
+				co.run();
+			}
+			else{
+				System.err.println(Errors.INVALID_PROTOCOL);
+				_serverSocket.send(Protocol.ERROR);
 				
-			}*/
-		}
-		else if(tokens[0].equals(Protocol.CHECK_FILE)){
-			//check if file exists
-		}
-		else if(tokens[0].equals(Protocol.UP_CS_FILE)){
-			//receive file from user
-		}
-		else if(tokens[0].equals(Protocol.UP_CS_RESPONSE)){
-			//receive response from ss upload
-		}
-		else{
-			throw new IOException("[CS]Invalid protocol usage: " + string);
+			}
+		} catch (NullPointerException e) {
+			System.err.println(Errors.NO_CLIENT_SOCKET);
+			System.exit(-1);
+		} catch (IOException e) {
+			System.err.println(Errors.IO_PROBLEM);
+			System.exit(-1);
 		}
 	}
 	
@@ -147,17 +163,23 @@ public class CS {
 	public static void main(String[] args){
 		try {
 			_port = initParser(args);
-			_listServer.run();
-			_uploadServer.run();
+			(new UploadServer()).run();
+			(new ListServer()).run();
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(Errors.INVALID_INITIALIZERS);
+			System.exit(-1);
+			
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(Errors.SOCKET_PROBLEM);
+			System.exit(-1);
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(Errors.IO_PROBLEM);
+			System.exit(-1);
+			
+		} catch (Exception e) {
+			System.err.println(Errors.UNKNOWN_ERROR);
+			System.exit(-1);
 		}
 	}
 	

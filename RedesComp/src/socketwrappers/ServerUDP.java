@@ -59,7 +59,7 @@ public class ServerUDP{
 	 */
 	public void reconnect() throws IOException{
 		_socket.close();
-		_socket.bind(new InetSocketAddress(InetAddress.getLocalHost(), _port));
+		_socket = new DatagramSocket();
 	}
 	
 	/**
