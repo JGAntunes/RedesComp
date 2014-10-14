@@ -1,37 +1,39 @@
-JAVAC = javac
-JAVACFLAGS = -g
+JC = javac
+JFLAGS = -g
+CLASSPATH = src/
+OUTPUT = bin/
 
 .SUFFIXES: .java .class
+.java.class:
+	$(JC) $(JFLAGS) -cp $(CLASSPATH) -d $(OUTPUT) $*.java
 
-SRC= user/User.java \
-    commands/Command.java \
-    commands/user/Retrieve.java \
-    commands/user/Upload.java \
-    commands/user/List.java \
-    commands/ss/Retrieve.java \
-    commands/ss/Upload.java \
-    commands/cs/Upload.java \
-    socketwrappers/ServerTCP.java \
-    socketwrappers/ClientTCP.java \
-    socketwrappers/ServerUDP.java \
-    socketwrappers/ClientUDP.java \
-    socketwrappers/MessageTCP.java \
-    socketwrappers/MessageUDP.java \
-    utils/Errors.java \
-    utils/Protocol.java \
-    utils/FileHandler.java \
-    utils/LocalPaths.java \
-    utils/StreamProcessors.java \
-    servers/CS.java \
-    servers/SS.java
-
-CLS= $(SRC:.java=.class)
-
-all:  $(CLS)
+CLASSES= \
+	src/utils/Errors.java \
+	src/utils/Protocol.java \
+	src/socketwrappers/MessageTCP.java \
+	src/socketwrappers/MessageUDP.java \
+	src/utils/StreamProcessors.java \
+	src/utils/FileHandler.java \
+	src/utils/LocalPaths.java \
+	src/socketwrappers/ServerTCP.java \
+	src/socketwrappers/ClientTCP.java \
+	src/socketwrappers/ServerUDP.java \
+	src/socketwrappers/ClientUDP.java \
+	src/commands/Command.java \
+	src/commands/user/Retrieve.java \
+	src/commands/user/Upload.java \
+	src/commands/user/List.java \
+	src/commands/ss/Retrieve.java \
+	src/commands/ss/Upload.java \
+	src/commands/cs/Upload.java \
+	src/user/User.java \
+	src/servers/CS.java \
+	src/servers/SS.java
 
 default: classes
 
-classes: $(SRC:.java=.class)
+classes: $(CLASSES:.java=.class)
 
 clean:
-    $(RM) *.class
+	rm -rf $(OUTPUT)
+	mkdir -p $(OUTPUT)
