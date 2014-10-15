@@ -41,6 +41,7 @@ public class Upload extends Command{
 			String args[] = _server.receive().split(" ");
 			if(args.length == 2){
 				if(args[0].equals(Protocol.CHECK_FILE)){
+					
 					String filename = args[0];
 					String[] files = CS.readFromFile("SS_List");
 					for(String f : files){
@@ -50,10 +51,18 @@ public class Upload extends Command{
 							System.exit(0);
 						}
 					}
+					
 					_server.send(Protocol.CHECK_FILE_RESPONSE + " " + Protocol.AVAILABLE);
+					
 					MessageTCP response = _server.receive(2, true);
+					
+					System.out.println(response.getStrParams()[0]);
 					args = response.getStrParams();
-					if((args.length == 2) && (args[0].equals(Protocol.CHECK_FILE))){
+					System.out.println(args.length);
+					if(args.length == 2){
+						System.out.println(response.getData().length);
+						System.out.println(args[1]);
+						System.out.println(new String(response.getData(), "UTF-8"));
 						if(Integer.parseInt(args[1]) == response.getData().length){
 							byte[] sendMessage = new String(Protocol.UP_CS_FILE + " " + filename + " " + response.getData().length + " ").getBytes();
 							byte[] result = StreamProcessors.concatByte(sendMessage, sendMessage.length, response.getData(), response.getData().length);
@@ -61,7 +70,9 @@ public class Upload extends Command{
 							String responseCommand = Protocol.UP_USER_RESPONSE;
 							for(String s : servers){
 								String[] info = s.split(" ");
+								System.out.println("About to send");
 								_client = new ClientTCP(info[0], Integer.parseInt(info[1]));
+								System.out.println("Sending info:" + info[0] + Integer.parseInt(info[1]));
 								_client.sendToServer(StreamProcessors.concatByte(result, result.length, ("\n").getBytes(), 1));
 								String[] resp = _client.receiveFromServer().split(" ");
 								if(resp.length == 2 && resp[0].equals(Protocol.UP_CS_RESPONSE)){

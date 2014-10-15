@@ -35,7 +35,7 @@ public class ServerTCP{
 		_port = port;
 		_serverSocket = new ServerSocket(_port);
 		System.out.println("Running on TCP: " + _port);
-		_input = null;
+		setInput(null);
 		_clientSocket = null;
 		_output = null;
 	}
@@ -108,7 +108,7 @@ public class ServerTCP{
 	public void waitConnection() throws IOException{
 		_clientSocket = _serverSocket.accept();
 		_output = new DataOutputStream(_clientSocket.getOutputStream());
-		_input = new BufferedInputStream(_clientSocket.getInputStream());
+		setInput(new BufferedInputStream(_clientSocket.getInputStream()));
 	}
 	
 	public void send(String message) throws IOException, NullPointerException{
@@ -128,10 +128,13 @@ public class ServerTCP{
 		Scanner sc = new Scanner(_input);
 		return sc.nextLine();
 	}
-	
-	public String receive(boolean b) throws IOException, NullPointerException{
-		Scanner sc = new Scanner(_input);
-		return sc.next();
+
+	public BufferedInputStream getInput() {
+		return _input;
+	}
+
+	public void setInput(BufferedInputStream input) {
+		_input = input;
 	}
 
 }

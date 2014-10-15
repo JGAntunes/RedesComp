@@ -1,11 +1,10 @@
 JC = javac
 JFLAGS = -g
 CLASSPATH = src/
-OUTPUT = bin/
 
 .SUFFIXES: .java .class
 .java.class:
-	$(JC) $(JFLAGS) -cp $(CLASSPATH) -d $(OUTPUT) $*.java
+	$(JC) $(JFLAGS) -classpath $(CLASSPATH) $*.java
 
 CLASSES= \
 	src/utils/Errors.java \
@@ -30,10 +29,29 @@ CLASSES= \
 	src/servers/CS.java \
 	src/servers/SS.java
 
-default: classes
+default: clean classes
 
 classes: $(CLASSES:.java=.class)
 
 clean:
-	rm -rf $(OUTPUT)
-	mkdir -p $(OUTPUT)
+	rm -rf 	src/utils/Errors.class \
+	src/utils/Protocol.class \
+	src/socketwrappers/MessageTCP.class \
+	src/socketwrappers/MessageUDP.class \
+	src/utils/StreamProcessors.class \
+	src/utils/FileHandler.class \
+	src/utils/LocalPaths.class \
+	src/socketwrappers/ServerTCP.class \
+	src/socketwrappers/ClientTCP.class \
+	src/socketwrappers/ServerUDP.class \
+	src/socketwrappers/ClientUDP.class \
+	src/commands/Command.class \
+	src/commands/user/Retrieve.class \
+	src/commands/user/Upload.class \
+	src/commands/user/List.class \
+	src/commands/ss/Retrieve.class \
+	src/commands/ss/Upload.class \
+	src/commands/cs/Upload.class \
+	src/user/User.class \
+	src/servers/CS.class \
+	src/servers/SS.class

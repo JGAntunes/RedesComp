@@ -27,9 +27,9 @@ public class Upload extends Command{
 	
 	private MessageTCP _message;
 	
-	public Upload (ServerTCP server, int args, boolean data) throws NullPointerException, IOException{
+	public Upload (ServerTCP server, MessageTCP message) throws NullPointerException, IOException{
 		_server = server;
-		_message = _server.receive(args, data);
+		_message = message;
 	}
 	
 	@Override

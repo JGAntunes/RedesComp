@@ -25,44 +25,29 @@ public class Retrieve  extends Command{
 	private ServerTCP _server;
 	private String[] _input;
 	
-	public Retrieve (ServerTCP server){
-		_server = server;
-	}
-	
-	public Retrieve (MessageTCP message){
+	public Retrieve (ServerTCP server, MessageTCP message){
 		_input = message.getStrParams();
+		_server = server;
 	}
 	
 	@Override
 	public void run() {
 		try{
-			String[] input = new String[0];
-			try {
-				input = _server.receive().split(" ");
-			} catch (NullPointerException e1) {
-				input = _input;
-			}
-			if(input.length<2){
-				if(input[0].equals(Protocol.DOWN_FILE)){
-					String fileName = input[1];
-					String echoToScreen = fileName + " " + _server.getClientSocket().getInetAddress().getHostAddress() + " " + _server.getClientSocket().getPort();
-					System.out.println(echoToScreen);
-					String responseCommand = Protocol.DOWN_RESPONSE;
-					try {
-						byte[] file = FileHandler.upFile(LocalPaths.STORED + fileName); //check for missing file
-						byte[] init = (responseCommand + "ok " + (file.length-1) + " ").getBytes();
-						_server.send(StreamProcessors.concatByte(init, init.length, file, file.length));
-					} catch (FileNotFoundException e) {
-						//missing file
-						_server.send((responseCommand + "nok\n").getBytes());
-					} catch (SocketException e){
-						//socket business
-					} finally{
-						_server.closeClient();
-					}
-				}
-				else{
+			if(_input.length == 1){
+				String fileName = _input[0];
+				String echoToScreen = fileName + " " + _server.getClientSocket().getInetAddress().getHostAddress() + " " + _server.getClientSocket().getPort();
+				System.out.println(echoToScreen);
+				String responseCommand = Protocol.DOWN_RESPONSE;
+				try {
+					byte[] file = FileHandler.upFile(LocalPaths.STORED + fileName); //check for missing file
+					byte[] init = (responseCommand + " ok " + (file.length-1) + " ").getBytes();
+					_server.send(StreamProcessors.concatByte(init, init.length, file, file.length));
+				} catch (FileNotFoundException e) {
+					_server.send((responseCommand + " nok\n").getBytes());
+				} catch (SocketException e){
 					_server.send(Protocol.ERROR);
+					_server.closeClient();
+				} finally{
 					_server.closeClient();
 				}
 			}
@@ -73,7 +58,5 @@ public class Retrieve  extends Command{
 		} catch (IOException e){
 			//blow up business
 		}
-		
-		System.exit(1);
 	}
 }

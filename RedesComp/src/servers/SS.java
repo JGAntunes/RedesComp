@@ -46,19 +46,31 @@ public class SS {
 		@Override
 		public void run() {
 			try {
+				System.out.println("Running");
+				byte[] inputBuff = StreamProcessors.readFile(_server.getInput());
+				Scanner sc = new Scanner(new ByteArrayInputStream(inputBuff));
+				String string = sc.next();
 				Thread co;
-				MessageTCP message = _server.receive(2, false);
-				String string = message.getStrParams()[0];
 				if(string.isEmpty()){
 					System.err.println(Errors.INVALID_PROTOCOL);
 					_server.send(Protocol.ERROR);
 				}
 				else if(string.equals(Protocol.DOWN_FILE)){
-					co = new Thread( new Retrieve(message));
+					String[] arg = {sc.next()};
+					MessageTCP message  =  new MessageTCP(arg, null);
+					co = new Thread( new Retrieve(_server, message));
 					co.start();
 				}
 				else if(string.equals(Protocol.UP_CS_FILE)){
-					co = new Thread( new Upload(_server, 2, true));
+					String[] args = {sc.next(), sc.next()};
+					int offset = 0;
+					for(String s: args){
+						offset += s.length() + 1;
+					}
+					byte[] resultBuff = new byte[inputBuff.length - offset];
+					System.arraycopy(inputBuff, offset, resultBuff, 0, resultBuff.length);
+					MessageTCP message  =  new MessageTCP(args, resultBuff);
+					co = new Thread( new Upload(_server,message));
 					co.start();
 				}
 				else{
